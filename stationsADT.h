@@ -5,6 +5,8 @@
     el tipo asbtracto de dato "stations"
 */
 
+#include <stdio.h>
+
 #ifndef _stations_h
 #define _stations_h
 
@@ -30,14 +32,17 @@ stationsADT newStations();
 void freeStations(stationsADT);
 
 /*
-    Funcion: addStation
-    Uso: addStation(estaciones, estacion)
+    Funcion: addStations
+    Uso: addStations(estaciones, archivo, indentificador)
     ----------------------------------
-    Esta funcion agrega una estacion nueva a las estaciones. 
-    La inicializa con los datos correspondientes a la estacion brindada.
+    Esta funcion agrega las estaciones que contiene el archivo.
+    A su vez, posee un "identificador" para cada ciudad correspondiente,
+    el cual puede tomar 2 valores diferentes de constantes predefinidas:
+    . 0 si la ciudad es Nueva York, o un tipo de formato como esta,
+    . 1 si la ciudad es Montreal, o un tipo de formato como esta.
 */
 
-void addStation(stationsADT, station);
+void addStations(stationsADT, FILE * file, size_t identifier);
 
 /*
     Funcion: processEvent
@@ -47,5 +52,28 @@ void addStation(stationsADT, station);
     de las estaciones con la informacion relevante para las queries.
 */
 
-void processEvent(stationsADT, event);
+void processEvent(stationsADT, FILE * file);
+
+/*
+    Funcion: printStations
+    Uso: printStations(stationsAdt)
+    ----------------------------------
+    Esta funcion se encarga de imprimir en pantalla las
+    caracteristicas de todas las estaciones. Mas que nada
+    se le da un uso en los testing.
+*/
+
+void printStations(stationsADT stationsAdt);
+
+/*
+    Funcion: freeStations
+    Uso: freeStations(stationsAdt)
+    ----------------------------------
+    Esta funcion se encarga de liberar la memoria ocupada
+    por el ADT.
+*/
+
+void freeStations(stationsADT stationsAdt);
+
+
 #endif

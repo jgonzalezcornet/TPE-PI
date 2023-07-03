@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "queries.h"
 #include "stationsADT.h"
+#define MON 1
 
 #define DELIM ";"
 
@@ -16,8 +17,8 @@ int main(int argc, char *argv[]) {
     
     // Carga de datos
 
-    processEvents(stationsAdt, argv[1]);
-    processStations(stationsADT, argv[2]);
+    processEvent(stationsAdt, argv[1]);
+    addStations(stationsAdt, argv[2], MON);
 
     // Procesamiento de queries
 
