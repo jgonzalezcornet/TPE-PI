@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     // Carga de datos
 
     processEvents(stationsAdt, argv[1]);
-    processStations(stationsAdt, argv[2]);
+    addStations(stationsAdt, argv[2], MON);
 
     // Procesamiento de queries
 

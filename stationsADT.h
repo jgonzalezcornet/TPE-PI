@@ -45,16 +45,6 @@ void freeStations(stationsADT);
 void addStations(stationsADT, FILE * file, size_t identifier);
 
 /*
-    Funcion: processEvent
-    Uso: processEvent(stations, event)
-    ----------------------------------
-    Esta funcion procesa un evento y modifica los atributos 
-    de las estaciones con la informacion relevante para las queries.
-*/
-
-void processEvent(stationsADT, FILE * file);
-
-/*
     Funcion: printStations
     Uso: printStations(stationsAdt)
     -------------------------------

@@ -12,7 +12,7 @@
 #define BLOCK 1000
 #define MONTHS 12
 
-typedef struct station{
+typedef struct station {
     size_t id;
     char *name;
     double latitude;
@@ -23,7 +23,7 @@ typedef struct station{
     struct station *tailName;
 } station;
 
-struct stationsCDT{
+struct stationsCDT {
     station *firstTrip;
     station *firstName;
     size_t dim;
@@ -32,21 +32,25 @@ struct stationsCDT{
 double strToDouble(char *s) {
     double ans = 0;
     double flag = 1;
-    int decimal,i,j;
+    int decimal, i, j;
 
     if(*s == '-') {
         flag = -1;
-        s = s+1;
+        i = 1;
     }
-    for(i = 0; s[i] != '.' ; i++)
-        ;
+    while(s[i] != '.') {
+        i++;
+    }
+
     decimal = i;
     for(i = decimal-1, j = 0; i >= 0; i--) {
         ans += (s[j++] - '0') * pow(10,i);
     }
+
     for (i = decimal+1; s[i] != '\0' ; i++) {
-        ans +=  ( s[i] - '0') * pow(10, decimal-i);
+        ans +=  (s[i] - '0') * pow(10, decimal-i);
     }
+
     ans *= flag;
     return ans;
 }
