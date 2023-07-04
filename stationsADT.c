@@ -15,8 +15,6 @@
 typedef struct station {
     size_t id;
     char *name;
-    double latitude;
-    double longitude;
     size_t quanTripsMonth[MONTHS];
     size_t quanTripsTotal;
     struct station *tailTrip;
@@ -38,6 +36,7 @@ double strToDouble(char *s) {
         flag = -1;
         i = 1;
     }
+
     while(s[i] != '.') {
         i++;
     }
@@ -64,49 +63,45 @@ static size_t strToInt(char *s) {
     return ans;
 }
 
-static station *newStationRec(station *first, char *name, double latit, double longit, size_t id){
+static station *newStationRec(station *first, char *name, size_t id) {
     int c;
-    if(first == NULL || (c = strcmp(first->name, name)) > 0){
-        station *aux = calloc(1,sizeof(station));
+    if(first == NULL || (c = strcmp(first->name, name)) > 0) {
+        station *aux = calloc(1, sizeof(station));
         aux->name = malloc(strlen(name) + 1);
         strcpy(aux->name, name);
         aux->id = id;
-        aux->latitude = latit;
-        aux->longitude = longit;
         aux->tailName = aux->tailTrip = first;
         return aux;
     }
     if(c < 0) {
-        first->tailName = first->tailTrip = newStationRec(first->tailName, name, latit, longit, id);
+        first->tailName = first->tailTrip = newStationRec(first->tailName, name, id);
     }
     return first;
 }
 
-static station * addStation( station * first, char *str, size_t identifier) {
+static station *addStation(station *first, char *str, size_t identifier) {
     const char delim[2] = ";";
-    char *id, *longit, *latit, *name;
+    char *id, *name;
 
     if(identifier == NYC) {
         name = strtok(str,delim);
-        latit = strtok(NULL,delim);
-        longit = strtok(NULL,delim);
+        strtok(NULL,delim);
+        strtok(NULL,delim);
         id = strtok(NULL,delim);
     } else {
         id = strtok(str,delim);
         name = strtok(NULL,delim);
-        latit = strtok(NULL,delim);
-        longit = strtok(NULL,delim);
     }
 
-    first = newStationRec(first, name, strToDouble(latit), strToDouble(longit), strToInt(id));
+    first = newStationRec(first, name, strToInt(id));
     return first;
 }
 
-stationsADT newStations(){
-    return calloc(1,sizeof(struct stationsCDT));
+stationsADT newStations() {
+    return calloc(1, sizeof(struct stationsCDT));
 }
 
-void addStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
+void addStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
     char str[MAX_CHAR];
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
     while(fgets(str, MAX_CHAR, file) != NULL){
@@ -117,7 +112,7 @@ void addStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
 static void printStationsRec(station * station) {
     if(station == NULL)
         return;
-    printf("nombre: %s longitud: %f, latitud: %f, id: %d\n", station->name, station->longitude, station->latitude, station->id);
+    printf("nombre: %s id: %d\n", station->name, station->id);
     printStationsRec(station->tailName);
 }
 
@@ -125,7 +120,7 @@ void printStations(stationsADT stationsAdt) {
     printStationsRec(stationsAdt->firstName);
 }
 
-static void freeStationsRec(station * station) {
+static void freeStationsRec(station *station) {
     if(station == NULL)
         return;
     freeStationsRec(station->tailName);
