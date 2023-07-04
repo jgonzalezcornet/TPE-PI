@@ -47,7 +47,7 @@ double strToDouble(char *s) {
         ans += (s[j++] - '0') * pow(10,i);
     }
 
-    for (i = decimal+1; s[i] != '\0' ; i++) {
+    for(i = decimal+1; s[i] != '\0' ; i++) {
         ans +=  (s[i] - '0') * pow(10, decimal-i);
     }
 
