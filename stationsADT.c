@@ -5,14 +5,6 @@
 #define BLOCK 1000
 #define MONTHS 12
 
-typedef struct {
-    char *start;
-    char *end;
-    size_t isMember;
-    size_t idStart;
-    size_t idEnd;
-} event;
-
 typedef struct station{
     size_t id;
     char name[MAX_LEN];

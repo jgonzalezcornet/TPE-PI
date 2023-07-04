@@ -30,22 +30,12 @@ stationsADT newStations();
 void freeStations(stationsADT);
 
 /*
-    Funcion: addStation
-    Uso: addStation(estaciones, estacion)
-    ----------------------------------
-    Esta funcion agrega una estacion nueva a las estaciones. 
-    La inicializa con los datos correspondientes a la estacion brindada.
-*/
-
-void addStation(stationsADT, station);
-
-/*
     Funcion: processEvent
-    Uso: processEvent(stations, event)
+    Uso: processEvent(stations)
     ----------------------------------
     Esta funcion procesa un evento y modifica los atributos 
     de las estaciones con la informacion relevante para las queries.
 */
 
-void processEvent(stationsADT, event);
+void processEvent(stationsADT);
 #endif
