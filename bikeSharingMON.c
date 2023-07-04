@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "queries.h"
 #include "stationsADT.h"
+#define MON 1
 
 #define DELIM ";"
 
