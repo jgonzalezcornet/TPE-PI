@@ -23,8 +23,7 @@ void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier)
             id = atoi(strtok(str,delim));
             name = strtok(NULL,delim);
         }
-        printf("%d %s\n",id,name);
-        //parseStation(stationsAdt, id, name);
+        parseStation(stationsAdt, id, name);
     }
 }
 
@@ -54,16 +53,6 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier)
         }
         strtok(aux,"-");
         month = atoi(strtok(NULL,"-"));
-        printf("%d\t%d\t%d\t%d\n",month, fromId, toId, isMember);
-        //parseEvent(stationsAdt, month, fromId, toId, isMember);
+        parseEvent(stationsAdt, month, fromId, toId, isMember);
     }
-}
-
-int main()
-{
-    FILE *file = fopen("bikesNYC.csv","r");
-    stationsADT stations = newStations();
-    parseEvents(stations, file, NYC);
-    freeStations(stations);
-    return 0;
 }
