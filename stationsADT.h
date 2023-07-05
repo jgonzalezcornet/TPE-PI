@@ -65,4 +65,10 @@ void printStations(stationsADT stationsAdt);
 
 void freeStations(stationsADT stationsAdt);
 
+size_t hasNextTrip(stationsADT stationsAdt);
+
+void nextTrip(stationsADT stationsAdt);
+
+void toBeginTrip(stationsADT stationsAdt);
+
 #endif 

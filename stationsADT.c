@@ -2,15 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stddef.h>
 
 #define NYC 0
 #define MON 1
-#define MAX_CHAR 250
-#include <stddef.h>
-
-#define MAX_LEN 50
-#define BLOCK 1000
 #define MONTHS 12
+
+typedef struct subStations {
+    size_t id;
+    char *name;
+    size_t AtoB;
+    size_t BtoA;
+    struct subStations *tailSubStations;
+} subStations;
 
 typedef struct station {
     size_t id;
@@ -19,94 +23,23 @@ typedef struct station {
     size_t quanTripsTotal;
     struct station *tailTrip;
     struct station *tailName;
+    struct subStations *firstSubstation;
 } station;
 
 struct stationsCDT {
     station *firstTrip;
     station *firstName;
+    station *itTrip;
+    station *itName;
     size_t dim;
 };
 
-double strToDouble(char *s) {
-    double ans = 0;
-    double flag = 1;
-    int decimal, i, j;
-
-    if(*s == '-') {
-        flag = -1;
-        i = 1;
-    }
-
-    while(s[i] != '.') {
-        i++;
-    }
-
-    decimal = i;
-    for(i = decimal-1, j = 0; i >= 0; i--) {
-        ans += (s[j++] - '0') * pow(10,i);
-    }
-
-    for(i = decimal+1; s[i] != '\0' ; i++) {
-        ans +=  (s[i] - '0') * pow(10, decimal-i);
-    }
-
-    ans *= flag;
-    return ans;
-}
-
-static size_t strToInt(char *s) {
-    size_t ans = 0;
-    int i,j;
-    for(i = strlen(s)-1, j = 0; i >= 0; i--) {
-        ans += (s[j++] - '0') * pow(10,i);
-    }
-    return ans;
-}
-
-static station *newStationRec(station *first, char *name, size_t id) {
-    int c;
-    if(first == NULL || (c = strcmp(first->name, name)) > 0) {
-        station *aux = calloc(1, sizeof(station));
-        aux->name = malloc(strlen(name) + 1);
-        strcpy(aux->name, name);
-        aux->id = id;
-        aux->tailName = aux->tailTrip = first;
-        return aux;
-    }
-    if(c < 0) {
-        first->tailName = first->tailTrip = newStationRec(first->tailName, name, id);
-    }
-    return first;
-}
-
-static station *addStation(station *first, char *str, size_t identifier) {
-    const char delim[2] = ";";
-    char *id, *name;
-
-    if(identifier == NYC) {
-        name = strtok(str,delim);
-        strtok(NULL,delim);
-        strtok(NULL,delim);
-        id = strtok(NULL,delim);
-    } else {
-        id = strtok(str,delim);
-        name = strtok(NULL,delim);
-    }
-
-    first = newStationRec(first, name, strToInt(id));
-    return first;
+void addStation(stationsADT stationsAdt, size_t id, char* name) {
+    
 }
 
 stationsADT newStations() {
     return calloc(1, sizeof(struct stationsCDT));
-}
-
-void addStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
-    char str[MAX_CHAR];
-    fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
-    while(fgets(str, MAX_CHAR, file) != NULL){
-        stationsAdt->firstName = stationsAdt->firstTrip = addStation(stationsAdt->firstName, str, identifier);
-    }
 }
 
 static void printStationsRec(station * station) {

@@ -22,7 +22,7 @@ void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
             id = atoi(strtok(str, delim));
             name = strtok(NULL, delim);
         }
-        parseStation(stationsAdt, id, name);
+        addStation(stationsAdt, id, name);
     }
 }
 
@@ -41,7 +41,7 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
 
         if(identifier == NYC) {
             strtok(NULL, delim);
-            if(strcmp(strtok(NULL,delim), "member\n") == 0) { //la linea del archivo termina con un '\n'
+            if(strcmp(strtok(NULL, delim), "member\n") == 0) { //la linea del archivo termina con un '\n'
                 isMember = 1;
             }
         } else {
@@ -49,6 +49,6 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
         }
         strtok(aux, "-");
         month = atoi(strtok(NULL, "-"));
-        parseEvent(stationsAdt, month, fromId, toId, isMember);
+        processEvent(stationsAdt, month, fromId, toId, isMember);
     }
 }
