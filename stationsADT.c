@@ -92,14 +92,10 @@ size_t hasNextName(stationsADT stationsAdt) {
 	return stationsAdt->itName->tailName != NULL;
 }
 
-size_t nextN(stationsADT stationsAdt) {
+size_t nextName(stationsADT stationsAdt) {
 	size_t c;
 	if ((c = hasNextName(stationsAdt))){
 		stationsAdt->itName = stationsAdt->itName->tailName;
 	}
 	return c;
-}
-
-
-
 }
