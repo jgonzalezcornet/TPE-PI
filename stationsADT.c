@@ -110,8 +110,9 @@ void addStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
 }
 
 static void printStationsRec(station * station) {
-    if(station == NULL)
+    if(station == NULL) {
         return;
+    }
     printf("nombre: %s id: %d\n", station->name, station->id);
     printStationsRec(station->tailName);
 }
@@ -121,8 +122,9 @@ void printStations(stationsADT stationsAdt) {
 }
 
 static void freeStationsRec(station *station) {
-    if(station == NULL)
+    if(station == NULL) {
         return;
+    }
     freeStationsRec(station->tailName);
     free(station->name);
     free(station);
