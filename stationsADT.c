@@ -78,8 +78,28 @@ size_t hasNextTrip(stationsADT stationsAdt) {
 
 size_t nextTrip(stationsADT stationsAdt) {
     size_t c;
-    if(c = hasNextTrip(stationsAdt)) {
+    if((c = hasNextTrip(stationsAdt))) {
         stationsAdt->itTrip = stationsAdt->itTrip->tailTrip;
     }
     return c;
+}
+
+void toBeginName(stationsADT stationsAdt) {
+	stationsAdt->itName = stationsAdt->firstName;
+}
+
+size_t hasNextName(stationsADT stationsAdt) {
+	return stationsAdt->itName->tailName != NULL;
+}
+
+size_t nextN(stationsADT stationsAdt) {
+	size_t c;
+	if ((c = hasNextName(stationsAdt))){
+		stationsAdt->itName = stationsAdt->itName->tailName;
+	}
+	return c;
+}
+
+
+
 }
