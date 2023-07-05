@@ -46,7 +46,7 @@ void addStations(stationsADT, FILE * file, size_t identifier);
 
 /*
     Funcion: printStations
-    Uso: printStations(stationsAdt)
+    Uso: printStations(estaciones)
     -------------------------------
     Esta funcion se encarga de imprimir en pantalla las
     caracteristicas de todas las estaciones. Mas que nada
@@ -57,7 +57,7 @@ void printStations(stationsADT stationsAdt);
 
 /*
     Funcion: freeStations
-    Uso: freeStations(stationsAdt)
+    Uso: freeStations(estaciones)
     ------------------------------
     Esta funcion se encarga de liberar la memoria ocupada
     por el ADT.
@@ -65,10 +65,36 @@ void printStations(stationsADT stationsAdt);
 
 void freeStations(stationsADT stationsAdt);
 
-size_t hasNextTrip(stationsADT stationsAdt);
-
-void nextTrip(stationsADT stationsAdt);
+/*
+    Funcion: toBeginTrip
+    Uso: toBeginTrip(estaciones)
+    ----------------------------
+    Esta funcion hace que al iterador por cantidad de viajes
+    "apunte" hacia el comienzo de la lista ordenada descendentemente
+    por cantidad de viajes.
+*/
 
 void toBeginTrip(stationsADT stationsAdt);
+
+/*
+    Funcion: hasNextTrip
+    Uso: hasNextTrip(estaciones)
+    ----------------------------
+    Esta funcion verifica si el iterador por cantidad de viajes
+    tiene un elemento siguiente, para evitar problemas de memoria.
+*/
+
+size_t hasNextTrip(stationsADT stationsAdt);
+
+/*
+    Funcion: nextTrip
+    Uso: nextTrip(estaciones)
+    -------------------------
+    Esta funcion "apunta" el iterador por cantidad de viajes
+    a su elemento siguiente, verificando previamente que este
+    exista. Si se pudo mover, retorna 1. Si no, 0.
+*/
+
+size_t nextTrip(stationsADT stationsAdt);
 
 #endif 

@@ -67,3 +67,19 @@ void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstName);
     free(stationsAdt);
 }
+
+void toBeginTrip(stationsADT stationsAdt) {
+    stationsAdt->itTrip = stationsAdt->firstTrip;
+}
+
+size_t hasNextTrip(stationsADT stationsAdt) {
+    return stationsAdt->itTrip->tailTrip != NULL;
+}
+
+size_t nextTrip(stationsADT stationsAdt) {
+    size_t c;
+    if(c = hasNextTrip(stationsAdt)) {
+        stationsAdt->itTrip = stationsAdt->itTrip->tailTrip;
+    }
+    return c;
+}
