@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "fileParsing.h"
+#include "stationsADT.h"
 #include <string.h>
 
 #define MAX_CHAR 250

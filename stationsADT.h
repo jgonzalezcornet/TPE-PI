@@ -42,7 +42,7 @@ void freeStations(stationsADT);
     . 1 si la ciudad es Montreal, o un tipo de formato como esta.
 */
 
-void addStations(stationsADT, FILE * file, size_t identifier);
+ void addStation(stationsADT stationsAdt, size_t id, char* name);
 
 /*
     Funcion: printStations
@@ -63,6 +63,8 @@ void printStations(stationsADT stationsAdt);
     por el ADT.
 */
 
+void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember);
+
 void freeStations(stationsADT stationsAdt);
 
 size_t hasNextTrip(stationsADT stationsAdt);
@@ -70,5 +72,9 @@ size_t hasNextTrip(stationsADT stationsAdt);
 void nextTrip(stationsADT stationsAdt);
 
 void toBeginTrip(stationsADT stationsAdt);
+
+void printLinks(stationsADT stationsAdt);
+
+void printSubStations(stationsADT stationsAdt);
 
 #endif 
