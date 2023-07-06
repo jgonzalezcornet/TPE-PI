@@ -9,6 +9,9 @@
 
 #ifndef _stations_h
 #define _stations_h
+#define NYC 0
+#define MON 1
+#define MONTHS 12
 
 typedef struct stationsCDT *stationsADT;
 
@@ -102,5 +105,11 @@ size_t hasNextTrip(stationsADT stationsAdt);
 */
 
 size_t nextTrip(stationsADT stationsAdt);
+
+char *getName(stationsADT stationsAdt, size_t flag);
+
+size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag);
+
+size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t flag);
 
 #endif

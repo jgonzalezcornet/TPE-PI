@@ -4,10 +4,6 @@
 #include <math.h>
 #include <stddef.h>
 
-#define NYC 0
-#define MON 1
-#define MONTHS 12
-
 typedef struct subStations {
     size_t id;
     char *name;
@@ -34,21 +30,18 @@ struct stationsCDT {
     size_t dim;
 };
 
-static station *addStationRec(station* first, size_t id, char *name)
-{
+static station *addStationRec(station* first, size_t id, char *name) {
     int c;
-    if(first == NULL || (c = strcmp(first->name, name)) > 0)
-    {
-        struct station *aux = calloc(1,sizeof(station));
+    if(first == NULL || (c = strcmp(first->name, name)) > 0) {
+        struct station *aux = calloc(1, sizeof(station));
         aux->id = id;
-        aux->name = malloc(strlen(name)+1); //ver xq no anda sin el malloc!
+        aux->name = malloc(strlen(name) + 1); //ver xq no anda sin el malloc!
         strcpy(aux->name, name);
         aux->tailName = first;
         return aux;
-    }
-    if(c < 0)
+    } else if(c < 0){
         first->tailName = addStationRec(first->tailName, id, name);
-
+    }
     return first;
 }
 
@@ -57,19 +50,16 @@ void addTrip(struct station* station, char **nameA, char **nameB, size_t month, 
     flagA = flagB = 0;
 
     struct station *aux = station;
-    while( (!flagA || !flagB) )
-    {
-        if(aux->id == fromId)
-        {
-            if(isMember)
+    while(!flagA || !flagB) {
+        if(aux->id == fromId) {
+            if(isMember){
                 aux->quanTripsMember++;
-
-            aux->quanTripsMonth[month-1]++;
+            }
+            aux->quanTripsMonth[month - 1]++;
             *nameA = aux->name;
             flagA = 1;
         }
-        if(aux->id == toId)
-        {
+        if(aux->id == toId) {
             *nameB = aux->name;
             flagB = 1;
         }
@@ -77,33 +67,29 @@ void addTrip(struct station* station, char **nameA, char **nameB, size_t month, 
     }
 }
 
-static struct subStations *addTripAtoBRec( struct subStations* first, char *name, char flagIsBtoA)
-{
+static struct subStations *addTripAtoBRec( struct subStations* first, char *name, char flagIsBtoA) {
     int c;
-    if(first == NULL || (c = strcmp(first->name, name)) > 0)
-    {
+    if(first == NULL || (c = strcmp(first->name, name)) > 0) {
         struct subStations *aux = calloc(1,sizeof(station));
         aux->name = name;
-        if(flagIsBtoA)
+        if(flagIsBtoA) {
             aux->BtoA++;
-        else
+        } else {
             aux->AtoB++;
+        }
         aux->tailSubStations = first;
         return aux;
     }
-    if(c < 0)
+    if(c < 0) {
         first->tailSubStations = addTripAtoBRec(first->tailSubStations, name, flagIsBtoA);
-
+    }
     return first;
 }
 
-static void addTripAtoB(stationsADT stationsAdt, char *nameA, char *nameB, char flagIsBtoA)
-{
+static void addTripAtoB(stationsADT stationsAdt, char *nameA, char *nameB, char flagIsBtoA) {
     struct station* aux = stationsAdt->firstName;
-    while (aux != NULL)
-    {
-       if(strcmp(aux->name, nameA) == 0)
-       {
+    while (aux != NULL) {
+       if(strcmp(aux->name, nameA) == 0) {
            aux->firstSubstation = addTripAtoBRec(aux->firstSubstation, nameB, flagIsBtoA);
            return;
        }
@@ -111,8 +97,7 @@ static void addTripAtoB(stationsADT stationsAdt, char *nameA, char *nameB, char 
     }
 }
 
-void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember)
-{
+void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
     char **nameA = malloc(500);
     char **nameB = malloc(500);
     char **nameAux;
@@ -120,15 +105,15 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
 
     addTrip(stationsAdt->firstName, nameA, nameB, month, fromId, toId, isMember);
 
-
     if(strcmp(*nameA,*nameB) > 0) {
         nameAux = nameA;
         nameA = nameB;
         nameB = nameAux;
         flagIsBtoA = 1;
     }
-    if(strcmp(*nameA, *nameB) != 0)
+    if(strcmp(*nameA, *nameB) != 0) {
         addTripAtoB(stationsAdt ,*nameA, *nameB, flagIsBtoA);
+    }
 
     free(nameA);
     free(nameB);
@@ -155,10 +140,10 @@ void printStations(stationsADT stationsAdt) {
     printStationsRec(stationsAdt->firstName);
 }
 
-static void freeSubStationsRec(subStations *subStation)
-{
-    if(subStation == NULL)
+static void freeSubStationsRec(subStations *subStation) {
+    if(subStation == NULL) {
         return;
+    }
     freeSubStationsRec(subStation->tailSubStations);
     free(subStation);
 }
@@ -167,6 +152,7 @@ static void freeStationsRec(station *station) {
     if(station == NULL) {
         return;
     }
+
     freeStationsRec(station->tailName);
     freeSubStationsRec(station->firstSubstation);
     free(station->name);
@@ -177,44 +163,45 @@ void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstName);
     free(stationsAdt);
 }
-static void printLinksStations(struct station* station)
-{
-    if(station == NULL)
+
+static void printLinksStations(struct station* station) {
+    if(station == NULL) {
         return;
+    }
 
     printf("nombre: %s, id: %d viajes por mes: %d\n", station->name, station->id,station->quanTripsMember);
-    for (int i = 0; i < MONTHS; i++)
+    
+    for (int i = 0; i < MONTHS; i++) {
         printf("viaje mes %d: %d\n",i+1,station->quanTripsMonth[i]);
+    }
+
     printLinksStations(station->tailName);
 }
 
-void printLinks(stationsADT stationsAdt)
-{
+void printLinks(stationsADT stationsAdt) {
     printLinksStations(stationsAdt->firstName);
 }
 
-static void printSubStationsRec(struct subStations* subStation)
-{
-    if(subStation == NULL)
+static void printSubStationsRec(struct subStations* subStation) {
+    if(subStation == NULL) {
         return;
+    }
     printf("nombre: %s,\t\t\t\t\t\t\t\t AtoB:%d, BtoA:%d\n",subStation->name, subStation->AtoB, subStation->BtoA);
     printSubStationsRec(subStation->tailSubStations);
 }
 
-static void printSubStations2(struct station* station)
-{
-    if(station == NULL)
+static void printSubStations2(struct station* station) {
+    if(station == NULL) {
         return;
+    }
     printf("ESTA SON LAS SUBESTACIONES DE %s\n",station->name);
     printSubStationsRec(station->firstSubstation);
     printSubStations2(station->tailName);
 }
 
-void printSubStations(stationsADT stationsAdt)
-{
+void printSubStations(stationsADT stationsAdt) {
     printSubStations2(stationsAdt->firstName);
 }
-
 
 void toBeginTrip(stationsADT stationsAdt) {
     stationsAdt->itTrip = stationsAdt->firstTrip;
@@ -242,8 +229,34 @@ size_t hasNextName(stationsADT stationsAdt) {
 
 size_t nextName(stationsADT stationsAdt) {
 	size_t c;
-	if ((c = hasNextName(stationsAdt))){
+	if((c = hasNextName(stationsAdt))) {
 		stationsAdt->itName = stationsAdt->itName->tailName;
 	}
 	return c;
+}
+
+char *getName(stationsADT stationsAdt, size_t flag) { // flag = 1 means check name it, flag = 0 means check trip it
+    if(flag && stationsAdt->itName != NULL) {
+        return stationsAdt->itName->name;
+    } else if(!flag && stationsAdt->itTrip != NULL) {
+        return stationsAdt->itTrip->name;
+    }
+}
+
+size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag) {
+    if(flag && stationsAdt->itName != NULL) {
+        return stationsAdt->itName->quanTripsMember;
+    } else if (!flag && stationsAdt->itTrip != NULL) {
+        return stationsAdt->itTrip->quanTripsMember;
+    }
+    return -1;
+}
+
+size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t flag) {
+    if(flag && stationsAdt->itName != NULL) {
+        return stationsAdt->itName->quanTripsMonth[month]; 
+    } else if (!flag && stationsAdt->itTrip != NULL) {
+        return stationsAdt->itTrip->quanTripsMonth[month];
+    }
+    return -1;
 }
