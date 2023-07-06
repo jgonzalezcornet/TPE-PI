@@ -20,22 +20,22 @@ int main(int argc, char *argv[]) {
 
     // Abrimos todos los archivos, estableciendo el errno en 0 para poder chequear si hay errores en la apertura
     errno = 0;
-    FILE * events = fopen(argv[1], "r");
-    FILE * stations = fopen(argv[2], "r");
-    FILE * query1 = fopen(query1.csv, "wt");
-    FILE * query2 = fopen(query2.csv, "wt");
-    FILE * query3 = fopen(query3.csv, "wt");
-    FILE * files[] = {events, stations, query1, query2, query3};
+    FILE *events = fopen(argv[1], "r");
+    FILE *stations = fopen(argv[2], "r");
+    FILE *query1 = fopen(query1.csv, "wt");
+    FILE *query2 = fopen(query2.csv, "wt");
+    FILE *query3 = fopen(query3.csv, "wt");
+    FILE *files[] = {events, stations, query1, query2, query3};
     size_t fileCount = QUERIES + argc - 1;
     
-    if (errno==ENOENT){
+    if(errno == ENOENT) {
         closeFiles(fileCount, files); // si alguno de los archivos no se pudo abrir, cierro todos
         fprintf(stderr, "No se pudo abrir alguno de los archivos.\n");
         exit(1);
     }
     
     stationsADT stationsAdt = newStations();
-    if (stationsAdt == NULL){
+    if(stationsAdt == NULL) {
         fprintf(stderr, "No hay memoria suficiente para llevar a cabo el programa.\n");
         closeFiles(fileCount, files);
         exit(1);
@@ -45,35 +45,10 @@ int main(int argc, char *argv[]) {
     parseEvents(stationsAdt, events, MON);
     parseStations(stationsAdt, stations, MON);
 
-   /* -------------- Resolución de las queries en HTML --------------*/
-    query1(stationsAdt);
-    query2(stationsAdt);
-    query3(stationsAdt);
-
-    
-    /* -------------- Resolución de la query 1 (csv) --------------*/
-    fprintf(query1, "Station;StartedTrips\n");
-    toBeginTrip(stationsAdt);
-    do {
-        fprintf(query1, "%s;%zu\n", stationsAdt->itTrip->name, stationsAdt->itTrip->quanTripsTotal);
-    } while (nextTrip(stationsAdt));
-    fclose(query1);
-
-    /* -------------- Resolución de la query 2 (csv) --------------*/
-
-    
-    /* -------------- Resolución de la query 3 (csv) --------------*/
-    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");
-    toBeginName(stationsAdt);
-    size_t count;
-    do {
-        for (size_t i=0 ; i<MONTHS ; i++){
-            count = stationsAdt->itName->quanTrips[i];
-            fprintf(query3, "%zu;", count);
-        }
-        fprintf(query3, "%s\n", stationsAdt->itName->name);
-    } while (nextName(stationsAdt));
-    fclose(query3);
+   /* -------------- Resolución de las queries --------------*/
+    query1(stationsAdt, query1);
+    query2(stationsAdt, query2);
+    query3(stationsAdt, query3);
 
     // Liberacion de memoria
     freeStations(stationsAdt);
@@ -84,8 +59,8 @@ int main(int argc, char *argv[]) {
 }
 
 void closeFiles (size_t count, FILE * files[]){
-    for (size_t i=0 ; i < count ; i++){
-        if (files[i]!=NULL){
+    for(size_t i=0; i < count; i++) {
+        if (files[i] != NULL){
             fclose(files[i]);
         }
     }
