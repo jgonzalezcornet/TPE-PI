@@ -236,27 +236,25 @@ size_t nextName(stationsADT stationsAdt) {
 }
 
 char *getName(stationsADT stationsAdt, size_t flag) { // flag = 1 means check name it, flag = 0 means check trip it
-    if(flag && stationsAdt->itName != NULL) {
+    if(flag) {
         return stationsAdt->itName->name;
-    } else if(!flag && stationsAdt->itTrip != NULL) {
-        return stationsAdt->itTrip->name;
     }
+
+    return stationsAdt->itTrip->name;
 }
 
 size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag) {
-    if(flag && stationsAdt->itName != NULL) {
+    if(flag) {
         return stationsAdt->itName->quanTripsMember;
-    } else if (!flag && stationsAdt->itTrip != NULL) {
-        return stationsAdt->itTrip->quanTripsMember;
     }
-    return -1;
+
+    return stationsAdt->itTrip->quanTripsMember;
 }
 
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t flag) {
-    if(flag && stationsAdt->itName != NULL) {
+    if(flag) {
         return stationsAdt->itName->quanTripsMonth[month]; 
-    } else if (!flag && stationsAdt->itTrip != NULL) {
-        return stationsAdt->itTrip->quanTripsMonth[month];
     }
-    return -1;
+
+    return stationsAdt->itTrip->quanTripsMonth[month];
 }

@@ -9,7 +9,7 @@ htmlTable query1(stationsADT stationsAdt, FILE *query1) {
     do{
         char *name = getName(stationsAdt, 0);
         size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
-        addHTMLRow(table, name, getTotalMemberTrips);
+        addHTMLRow(table, name, totalMemberTrips);
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);
     } while(hasNextTrip(stationsAdt));
 
@@ -19,11 +19,16 @@ htmlTable query1(stationsADT stationsAdt, FILE *query1) {
 }
 
 htmlTable query2(stationsADT stationsAdt, FILE *query2) {
+    htmlTable table = newTable("query2.html", 4, "StationA", "StationB", "Trips A->B", "Trips B->As");
+    toBeginName(stationsAdt);
 
+    do {
+        
+    } while(nextName(stationsAdt));
 }
 
 htmlTable query3(stationsADT stationsAdt, FILE *query3) {
-    htmlTable table = newTable("query2.html", 13, "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", "Station");
+    htmlTable table = newTable("query3.html", 13, "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", "Station");
     fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");
     toBeginName(stationsAdt);
 

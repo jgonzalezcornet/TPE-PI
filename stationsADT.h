@@ -4,11 +4,8 @@
     Este archivo es la interfaz de un modulo que exporta
     el tipo asbtracto de dato "stations"
 */
-
-#include <stdio.h>
-
-#ifndef _stations_h
-#define _stations_h
+#ifndef _stations_h_
+#define _stations_h_
 #define NYC 0
 #define MON 1
 #define MONTHS 12
