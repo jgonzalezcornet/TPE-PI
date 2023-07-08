@@ -1,8 +1,8 @@
 #include "stationsADT.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <math.h>
-#include <stddef.h>
 
 #define NYC 0
 #define MON 1
@@ -45,12 +45,12 @@ static struct stationByName *addStationRec(struct stationByName* first, size_t i
     {
         struct stationByName *aux = calloc(1,sizeof(station));
         aux->id = id;
-        aux->name = malloc(strlen(name)+1); //ver xq no anda sin el malloc!
+        aux->name = malloc(strlen(name) + 1); //ver xq no anda sin el malloc!
         strcpy(aux->name, name);
         aux->tailByName = first;
         return aux;
     }
-    if(c < 0)
+    else if(c < 0)
         first->tailByName = addStationRec(first->tailByName, id, name);
 
     return first;
@@ -77,16 +77,15 @@ void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t* 
         }
         if(aux->id == fromId)
         {
-            if(isMember)
+            if(isMember){
                 aux->quanTripsMember++;
-
-            aux->quanTripsMonth[month-1]++;
+            }
+            aux->quanTripsMonth[month - 1]++;
             *nameA = aux->name;
             *indexA = i;
             flagA = 1;
         }
-        if(aux->id == toId)
-        {
+        if(aux->id == toId) {
             *nameB = aux->name;
             *indexB = i;
             flagB = 1;
@@ -179,12 +178,15 @@ void freeStations(stationsADT stationsAdt) {
 
 static void printLinksStations(struct stationByName* station)
 {
-    if(station == NULL)
+    if(station == NULL){
         return;
+    }
 
     printf("nombre: %s, id: %d viajes por mes: %d\n", station->name, station->id,station->quanTripsMember);
-    for (int i = 0; i < MONTHS; i++)
-        printf("viaje mes %d: %d\n",i+1,station->quanTripsMonth[i]);
+
+    for (int i = 0; i < MONTHS; i++) {
+        printf("viaje mes %d: %d\n", i + 1, station->quanTripsMonth[i]);
+    }
     printLinksStations(station->tailByName);
 }
 
@@ -192,7 +194,6 @@ void printLinks(stationsADT stationsAdt)
 {
     printLinksStations(stationsAdt->firstByName);
 }
-
 
 void toBeginTrip(stationsADT stationsAdt) {
     stationsAdt->itTrip = stationsAdt->firstByTrip;
@@ -224,4 +225,25 @@ size_t nextName(stationsADT stationsAdt) {
 		stationsAdt->itName = stationsAdt->itName->tailByName;
 	}
 	return c;
+}
+
+char *getName(stationsADT stationsAdt, size_t flag) { // flag = 1 means check name it, flag = 0 means check trip it
+    if(flag) {
+        return stationsAdt->itName->name;
+    }
+
+    return stationsAdt->itTrip->name;
+}
+
+size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag) {
+    if(flag) {
+        return stationsAdt->itName->quanTripsMember;
+    }
+
+    return stationsAdt->itTrip->quantTripsMember;
+}
+
+size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t flag) {
+
+        return stationsAdt->itName->quanTripsMonth[month];
 }

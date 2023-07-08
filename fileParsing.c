@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stddef.h>
 #include "fileParsing.h"
 #include "stationsADT.h"
 #include <string.h>
@@ -55,7 +56,7 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
         processEvent(stationsAdt, month, fromId, toId, isMember);
     }
 }
-/*
+
 int main()
 {
 
@@ -77,5 +78,3 @@ int main()
     freeStations(stationsAdt);
     return 0;
 }
-
- ESTO ES PARTE DE TESTEO*/
