@@ -104,6 +104,11 @@ size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
     return (stationsAdt->matrix + (indexA * dim) + indexB)->quantTripsAtoB;
 }
 
+char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
+    size_t dim = stationsAdt->dim;
+    return (stationsAdt->matrix + (indexA * dim) + indexB)->nameA;
+}
+
 void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
     char existsIdFlag = 1;
     char **nameA = malloc(MAX_LEN);

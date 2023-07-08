@@ -29,7 +29,9 @@ htmlTable query2(stationsADT stationsAdt, FILE *query2) {
             if(i != j) {
                 size_t AB = getTripsAtoB(stationsAdt, i, j);
                 size_t BA = getTripsAtoB(stationsAdt, j, i);
-                
+                char *nameA = getMatrixName(stationsAdt, i, j);
+                char *nameB = getMatrixName(stationsAdt, j, i);
+                fprintf(query3);
             }
         }
     }

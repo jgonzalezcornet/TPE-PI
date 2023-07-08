@@ -125,4 +125,6 @@ size_t getTripsByMonth(stationsADT stationsAdt, size_t month);
 
 size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB);
 
+char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB);
+
 #endif
