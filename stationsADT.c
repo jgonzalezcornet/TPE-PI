@@ -8,6 +8,7 @@
 #define NYC 0
 #define MON 1
 #define MONTHS 12
+#define MAX_LEN 100
 
 typedef struct stationByName {
     size_t id;
@@ -29,7 +30,6 @@ typedef struct stationMat{
     size_t quantTripsAtoB;
 }stationMat;
 
-
 struct stationsCDT {
     struct stationByTrip *firstByTrip;
     struct stationByName *firstByName;
@@ -39,21 +39,18 @@ struct stationsCDT {
     size_t dim;
 };
 
-static struct stationByName *addStationRec(struct stationByName* first, size_t id, char *name)
-{
+static struct stationByName *addStationRec(struct stationByName* first, size_t id, char *name) {
     int c;
-    if(first == NULL || (c = strcmp(first->name, name)) > 0)
-    {
+    if(first == NULL || (c = strcmp(first->name, name)) > 0) {
         struct stationByName *aux = calloc(1,sizeof(station));
         aux->id = id;
         aux->name = malloc(strlen(name) + 1); //ver xq no anda sin el malloc!
         strcpy(aux->name, name);
         aux->tailByName = first;
         return aux;
-    }
-    else if(c < 0)
+    } else if(c < 0) {
         first->tailByName = addStationRec(first->tailByName, id, name);
-
+    }
     return first;
 }
 
@@ -62,23 +59,20 @@ void addStation(stationsADT stationsAdt, size_t id, char* name) {
     stationsAdt->dim++;
 }
 
-void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t* indexA, size_t* indexB, size_t month, size_t fromId, size_t toId, char isMember, char *existsIdFlag){
-
-    char flagA, flagB;
+void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t *indexA, size_t *indexB, size_t month, size_t fromId, size_t toId, char isMember, char *existsIdFlag){
+    size_t flagA, flagB;
     flagA = flagB = 0;
     size_t i = 0;
 
     struct stationByName *aux = station;
-    while( (!flagA || !flagB) )
-    {
+    while(!flagA || !flagB) {
         if(aux == NULL) //si llego a un NULL significa que alguno de los 2 id no coincide con alguna estacion.
         {
             *existsIdFlag = 0;
             return;
         }
-        if(aux->id == fromId)
-        {
-            if(isMember){
+        if(aux->id == fromId) {
+            if(isMember) {
                 aux->quanTripsMember++;
             }
             aux->quanTripsMonth[month - 1]++;
@@ -96,36 +90,43 @@ void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t* 
     }
 }
 
-static void addTripAtoB(stationMat *mat, char *nameA, char *nameB ,size_t indexA, size_t indexB, int rowSize)
-{
-    if((mat + (indexA * rowSize) + indexB)->nameA == NULL){
-        (mat + (indexA * rowSize) + indexB)->nameA = malloc(100);
-        (mat + (indexA * rowSize) + indexB)->nameB = malloc(100);
+static void addTripAtoB(stationMat *mat, char *nameA, char *nameB, size_t indexA, size_t indexB, int rowSize) {
+    if((mat + (indexA * rowSize) + indexB)->nameA == NULL) {
+        (mat + (indexA * rowSize) + indexB)->nameA = malloc(MAX_LEN);
+        (mat + (indexA * rowSize) + indexB)->nameB = malloc(MAX_LEN);
         strcpy((mat + (indexA * rowSize) + indexB)->nameA, nameA);
         strcpy((mat + (indexA * rowSize) + indexB)->nameB, nameB);
     }
     (mat + (indexA * rowSize) + indexB)->quantTripsAtoB++;
 }
 
-void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember)
-{
+size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
+    size_t dim = stationsAdt->dim;
+    return (stationsAdt->matrix + (indexA * dim) + indexB)->quantTripsAtoB;
+}
+
+char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
+    size_t dim = stationsAdt->dim;
+    return (stationsAdt->matrix + (indexA * dim) + indexB)->nameA;
+}
+
+void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
     char existsIdFlag = 1;
-    char **nameA = malloc(500);
-    char **nameB = malloc(500);
+    char **nameA = malloc(MAX_LEN);
+    char **nameB = malloc(MAX_LEN);
     size_t indexA;
     size_t indexB;
 
     addTrip(stationsAdt->firstByName, nameA, nameB, &indexA, &indexB, month, fromId, toId, isMember, &existsIdFlag);
 
-    if(existsIdFlag && (strcmp(*nameA, *nameB) != 0))
-    {
+    if(existsIdFlag && (strcmp(*nameA, *nameB) != 0)) {
         addTripAtoB(stationsAdt->matrix ,*nameA, *nameB, indexA, indexB, stationsAdt->dim);
     }
     free(nameA);
     free(nameB);
 }
 
-void printMatrix(stationsADT stationsAdt){
+void printMatrix(stationsADT stationsAdt) {
     for (int i = 0; i < stationsAdt->dim; i++) {
         for (int j = 0; j < stationsAdt->dim; j++) {
             char *auxA = (stationsAdt->matrix + (i * stationsAdt->dim) + j)->nameA;
@@ -137,11 +138,10 @@ void printMatrix(stationsADT stationsAdt){
     }
 }
 
-void newMat(stationsADT stationsAdt){
+void newMat(stationsADT stationsAdt) {
     stationMat *aux = calloc(1, (stationsAdt->dim * stationsAdt->dim) * sizeof(stationMat));
     stationsAdt->matrix = aux;
 }
-
 
 stationsADT newStations() {
     return calloc(1, sizeof(struct stationsCDT));
@@ -176,8 +176,7 @@ void freeStations(stationsADT stationsAdt) {
     free(stationsAdt);
 }
 
-static void printLinksStations(struct stationByName* station)
-{
+static void printLinksStations(struct stationByName* station) {
     if(station == NULL){
         return;
     }
@@ -243,7 +242,6 @@ size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag) {
     return stationsAdt->itTrip->quantTripsMember;
 }
 
-size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t flag) {
-
-        return stationsAdt->itName->quanTripsMonth[month];
+size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
+    return stationsAdt->itName->quanTripsMonth[month];
 }

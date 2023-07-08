@@ -34,7 +34,7 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
     char str[MAX_CHAR], isMember, *aux;
     size_t fromId, toId, month;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
-    newMat(stationsAdt); //creo la matriz de (cant_estaciones)x(cant_estaciones)
+    newMat(stationsAdt); // creo la matriz de (cant_estaciones)x(cant_estaciones)
 
     while(fgets(str, MAX_CHAR, file) != NULL) {
         isMember = 0;
