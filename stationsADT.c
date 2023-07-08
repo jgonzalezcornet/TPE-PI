@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <stddef.h>
 
 #define NYC 0
 #define MON 1
@@ -94,7 +95,6 @@ void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t* 
         i++;
     }
 }
-
 
 static void addTripAtoB(stationMat *mat, char *nameA, char *nameB ,size_t indexA, size_t indexB, int rowSize)
 {
