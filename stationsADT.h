@@ -117,4 +117,10 @@ size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag);
 
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t flag);
 
+ void toBeginName(stationsADT stationsAdt);
+
+ size_t hasNextName(stationsADT stationsAdt);
+
+ size_t nextName(stationsADT stationsAdt);
+
 #endif
