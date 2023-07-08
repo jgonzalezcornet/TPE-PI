@@ -123,4 +123,6 @@ size_t getTripsByMonth(stationsADT stationsAdt, size_t month);
 
  size_t nextName(stationsADT stationsAdt);
 
+size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB);
+
 #endif

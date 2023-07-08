@@ -27,8 +27,9 @@ htmlTable query2(stationsADT stationsAdt, FILE *query2) {
     for(size_t i = 0; i < dim; i++) {
         for(size_t j = 0; j < dim; j++) {
             if(i != j) {
-                addHTMLRow(table, );
-                fprintf(query2, );
+                size_t AB = getTripsAtoB(stationsAdt, i, j);
+                size_t BA = getTripsAtoB(stationsAdt, j, i);
+                
             }
         }
     }

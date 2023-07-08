@@ -90,13 +90,18 @@ void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t *
 }
 
 static void addTripAtoB(stationMat *mat, char *nameA, char *nameB, size_t indexA, size_t indexB, int rowSize) {
-    if((mat + (indexA * rowSize) + indexB)->nameA == NULL){
+    if((mat + (indexA * rowSize) + indexB)->nameA == NULL) {
         (mat + (indexA * rowSize) + indexB)->nameA = malloc(MAX_LEN);
         (mat + (indexA * rowSize) + indexB)->nameB = malloc(MAX_LEN);
         strcpy((mat + (indexA * rowSize) + indexB)->nameA, nameA);
         strcpy((mat + (indexA * rowSize) + indexB)->nameB, nameB);
     }
     (mat + (indexA * rowSize) + indexB)->quantTripsAtoB++;
+}
+
+size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
+    size_t dim = stationsAdt->dim;
+    return (stationsAdt->matrix + (indexA * dim) + indexB)->quantTripsAtoB;
 }
 
 void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
