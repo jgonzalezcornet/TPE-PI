@@ -25,8 +25,7 @@ typedef struct stationByTrip{
 };
 
 typedef struct stationMat{
-    char *nameA;
-    char *nameB;
+    char *name;
     size_t quantTripsAtoB;
 }stationMat;
 
@@ -35,7 +34,7 @@ struct stationsCDT {
     struct stationByName *firstByName;
     struct stationByTrip *itTrip;
     struct stationByName *itName;
-    stationMat *matrix;
+    stationMat **matrix;
     size_t dim;
 };
 
@@ -90,24 +89,20 @@ void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t *
     }
 }
 
-static void addTripAtoB(stationMat *mat, char *nameA, char *nameB, size_t indexA, size_t indexB, int rowSize) {
-    if((mat + (indexA * rowSize) + indexB)->nameA == NULL) {
-        (mat + (indexA * rowSize) + indexB)->nameA = malloc(MAX_LEN);
-        (mat + (indexA * rowSize) + indexB)->nameB = malloc(MAX_LEN);
-        strcpy((mat + (indexA * rowSize) + indexB)->nameA, nameA);
-        strcpy((mat + (indexA * rowSize) + indexB)->nameB, nameB);
+static void addTripAtoB(stationMat **mat, char *nameA, size_t indexA, size_t indexB) {
+    if(mat[indexA][indexB].name == NULL) {
+        mat[indexA][indexB].name = malloc(MAX_LEN);
+        strcpy(mat[indexA][indexB].name, nameA);
     }
-    (mat + (indexA * rowSize) + indexB)->quantTripsAtoB++;
+    mat[indexA][indexB].quantTripsAtoB++;
 }
 
 size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    size_t dim = stationsAdt->dim;
-    return (stationsAdt->matrix + (indexA * dim) + indexB)->quantTripsAtoB;
+    return stationsAdt->matrix[indexA][indexB].quantTripsAtoB;
 }
 
 char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    size_t dim = stationsAdt->dim;
-    return (stationsAdt->matrix + (indexA * dim) + indexB)->nameA;
+    return stationsAdt->matrix[indexA][indexB].name;
 }
 
 void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
@@ -120,7 +115,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     addTrip(stationsAdt->firstByName, nameA, nameB, &indexA, &indexB, month, fromId, toId, isMember, &existsIdFlag);
 
     if(existsIdFlag && (strcmp(*nameA, *nameB) != 0)) {
-        addTripAtoB(stationsAdt->matrix ,*nameA, *nameB, indexA, indexB, stationsAdt->dim);
+        addTripAtoB(stationsAdt->matrix ,*nameA, indexA, indexB);
     }
     free(nameA);
     free(nameB);
@@ -129,17 +124,22 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
 void printMatrix(stationsADT stationsAdt) {
     for (int i = 0; i < stationsAdt->dim; i++) {
         for (int j = 0; j < stationsAdt->dim; j++) {
-            char *auxA = (stationsAdt->matrix + (i * stationsAdt->dim) + j)->nameA;
-            char *auxB = (stationsAdt->matrix + (i * stationsAdt->dim) + j)->nameB;
-            if((stationsAdt->matrix + (i * stationsAdt->dim) + j)->quantTripsAtoB != 0)
-                printf("%s HASTA %s, %d VECES\n",auxA, auxB, (stationsAdt->matrix + (i * stationsAdt->dim) + j)->quantTripsAtoB);
+
+            if( stationsAdt->matrix[i][j].name != NULL && stationsAdt->matrix[j][i].name != NULL){
+                char *auxA = stationsAdt->matrix[i][j].name;
+                char *auxB = stationsAdt->matrix[j][i].name;
+                printf("%s,HASTA %s, %d VECES\n", auxA, auxB,stationsAdt->matrix[i][j].quantTripsAtoB);
+            }
         }
-        putchar('\n');
     }
 }
 
 void newMat(stationsADT stationsAdt) {
-    stationMat *aux = calloc(1, (stationsAdt->dim * stationsAdt->dim) * sizeof(stationMat));
+    size_t dim = stationsAdt->dim;
+    stationMat **aux = malloc(dim * sizeof(stationMat*));
+    for (size_t i = 0; i < dim; i++) {
+        aux[i] = calloc(1,dim * sizeof(stationMat));
+    }
     stationsAdt->matrix = aux;
 }
 
@@ -169,10 +169,20 @@ static void freeStationsRec(struct stationByName *station) {
     free(station);
 }
 
+static void freeMatrix( stationMat **matrix, size_t dim)
+{
+    stationMat * aux;
+    for (int i = 0; i < dim; i++) {
+        aux = matrix[i];
+        free(aux);
+    }
+    free(matrix);
+}
+
 void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
     //free(stationsAdt->firstByTrip);
-    free(stationsAdt->matrix);
+    freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt);
 }
 
