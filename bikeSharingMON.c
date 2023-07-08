@@ -14,7 +14,7 @@ void closeFiles(size_t count, FILE * files[]);
 int main(int argc, char *argv[]) {
     if(argc != 3) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
-        fprintf(stdin, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones\n");
+        fprintf(stdout, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones\n");
         exit(1);
     }
 

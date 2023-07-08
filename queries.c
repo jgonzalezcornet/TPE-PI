@@ -1,6 +1,14 @@
 #include "htmlTable.h"
 #include "stationsADT.h"
 
+#define MAX_DIGITS 10
+
+static char *unsignedIntToString(size_t num) {
+    char *s = malloc(MAX_DIGITS);
+    snprintf(s, sizeof s, "%zu", num);
+    return s;
+}
+
 htmlTable query1(stationsADT stationsAdt, FILE *query1) {
     htmlTable table = newTable("query1.html", 2, "Station", "StartedTrips");
     fprintf(query1, "Station;StartedTrips\n");
@@ -9,7 +17,7 @@ htmlTable query1(stationsADT stationsAdt, FILE *query1) {
     do{
         char *name = getName(stationsAdt, 0);
         size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
-        addHTMLRow(table, name, totalMemberTrips);
+        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips));
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);
     } while(hasNextTrip(stationsAdt));
 
@@ -31,7 +39,7 @@ htmlTable query2(stationsADT stationsAdt, FILE *query2) {
                 size_t BA = getTripsAtoB(stationsAdt, j, i);
                 char *nameA = getMatrixName(stationsAdt, i, j);
                 char *nameB = getMatrixName(stationsAdt, j, i);
-                fprintf(query3);
+                fprintf(query3, );
             }
         }
     }

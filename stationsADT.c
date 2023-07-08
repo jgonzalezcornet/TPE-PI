@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stddef.h>
+#include <errno.h>
 
 #define NYC 0
 #define MON 1
@@ -38,12 +39,36 @@ struct stationsCDT {
     size_t dim;
 };
 
+static void *safeMalloc(size_t bytes) {
+    void *mem = malloc(bytes);
+
+    if(mem == NULL || errno == ENOMEM) {
+        fprintf(stderr, "Error de memoria");
+        fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
+        exit(1);
+    }
+
+    return mem;
+}
+
+static void *safeCalloc(size_t quan, size_t bytes) {
+    void *mem = calloc(quan, bytes);
+
+    if(mem == NULL || errno == ENOMEM) {
+        fprintf(stderr, "Error de memoria");
+        fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
+        exit(1);
+    }
+
+    return mem;
+}
+
 static struct stationByName *addStationRec(struct stationByName* first, size_t id, char *name) {
     int c;
-    if(first == NULL || (c = strcmp(first->name, name)) > 0) {
-        struct stationByName *aux = calloc(1,sizeof(station));
+    if(first == NULL || (c = strcasecmp(first->name, name)) > 0) {
+        struct stationByName *aux = safeCalloc(1, sizeof(station));
         aux->id = id;
-        aux->name = malloc(strlen(name) + 1); //ver xq no anda sin el malloc!
+        aux->name = safeMalloc(strlen(name) + 1); //ver xq no anda sin el malloc!
         strcpy(aux->name, name);
         aux->tailByName = first;
         return aux;
@@ -65,8 +90,7 @@ void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t *
 
     struct stationByName *aux = station;
     while(!flagA || !flagB) {
-        if(aux == NULL) //si llego a un NULL significa que alguno de los 2 id no coincide con alguna estacion.
-        {
+        if(aux == NULL) { //si llego a un NULL significa que alguno de los 2 id no coincide con alguna estacion.
             *existsIdFlag = 0;
             return;
         }
@@ -91,7 +115,7 @@ void addTrip(struct stationByName* station, char **nameA, char **nameB, size_t *
 
 static void addTripAtoB(stationMat **mat, char *nameA, size_t indexA, size_t indexB) {
     if(mat[indexA][indexB].name == NULL) {
-        mat[indexA][indexB].name = malloc(MAX_LEN);
+        mat[indexA][indexB].name = safeMalloc(MAX_LEN);
         strcpy(mat[indexA][indexB].name, nameA);
     }
     mat[indexA][indexB].quantTripsAtoB++;
@@ -107,14 +131,14 @@ char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
 
 void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
     char existsIdFlag = 1;
-    char **nameA = malloc(MAX_LEN);
-    char **nameB = malloc(MAX_LEN);
+    char **nameA = safeMalloc(MAX_LEN);
+    char **nameB = safeMalloc(MAX_LEN);
     size_t indexA;
     size_t indexB;
 
     addTrip(stationsAdt->firstByName, nameA, nameB, &indexA, &indexB, month, fromId, toId, isMember, &existsIdFlag);
 
-    if(existsIdFlag && (strcmp(*nameA, *nameB) != 0)) {
+    if(existsIdFlag && (strcasecmp(*nameA, *nameB) != 0)) {
         addTripAtoB(stationsAdt->matrix ,*nameA, indexA, indexB);
     }
     free(nameA);
@@ -136,15 +160,15 @@ void printMatrix(stationsADT stationsAdt) {
 
 void newMat(stationsADT stationsAdt) {
     size_t dim = stationsAdt->dim;
-    stationMat **aux = malloc(dim * sizeof(stationMat*));
+    stationMat **aux = safeMalloc(dim * sizeof(stationMat*));
     for (size_t i = 0; i < dim; i++) {
-        aux[i] = calloc(1,dim * sizeof(stationMat));
+        aux[i] = safeCalloc(1,dim * sizeof(stationMat));
     }
     stationsAdt->matrix = aux;
 }
 
 stationsADT newStations() {
-    return calloc(1, sizeof(struct stationsCDT));
+    return safeCalloc(1, sizeof(struct stationsCDT));
 }
 
 static void printStationsRec(struct stationByName * station) {
@@ -199,8 +223,7 @@ static void printLinksStations(struct stationByName* station) {
     printLinksStations(station->tailByName);
 }
 
-void printLinks(stationsADT stationsAdt)
-{
+void printLinks(stationsADT stationsAdt) {
     printLinksStations(stationsAdt->firstByName);
 }
 
