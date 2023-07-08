@@ -22,6 +22,10 @@ typedef struct stationsCDT *stationsADT;
 
 stationsADT newStations();
 
+void newMat(stationsADT stationsAdt);
+
+ void printMatrix(stationsADT stationsAdt);
+
 /*
     Funcion: freeStations
     Uso: freeStations(stations)
