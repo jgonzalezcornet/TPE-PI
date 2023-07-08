@@ -20,11 +20,18 @@ htmlTable query1(stationsADT stationsAdt, FILE *query1) {
 
 htmlTable query2(stationsADT stationsAdt, FILE *query2) {
     htmlTable table = newTable("query2.html", 4, "StationA", "StationB", "Trips A->B", "Trips B->As");
-    toBeginName(stationsAdt);
+    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");
 
-    do {
-        
-    } while(nextName(stationsAdt));
+    size_t dim = getDim(stationsAdt);
+
+    for(size_t i = 0; i < dim; i++) {
+        for(size_t j = 0; j < dim; j++) {
+            if(i != j) {
+                addHTMLRow(table, );
+                fprintf(query2, );
+            }
+        }
+    }
 }
 
 htmlTable query3(stationsADT stationsAdt, FILE *query3) {
@@ -35,7 +42,7 @@ htmlTable query3(stationsADT stationsAdt, FILE *query3) {
     size_t count;
     do{
         for(size_t i=0 ; i<MONTHS ; i++) {
-            count = getTripsByMonth(stationsAdt, i, 1);
+            count = getTripsByMonth(stationsAdt, i);
             fprintf(query3, "%zu;", count);
         }
         fprintf(query3, "%s\n", getName(stationsAdt, 1));

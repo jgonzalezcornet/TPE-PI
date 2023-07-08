@@ -115,7 +115,7 @@ char *getName(stationsADT stationsAdt, size_t flag);
 
 size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag);
 
-size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t flag);
+size_t getTripsByMonth(stationsADT stationsAdt, size_t month);
 
  void toBeginName(stationsADT stationsAdt);
 
