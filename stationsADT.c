@@ -145,7 +145,7 @@ void printMatrix(stationsADT stationsAdt) {
             if( stationsAdt->matrix[i][j].name != NULL && stationsAdt->matrix[j][i].name != NULL){
                 char * auxA = stationsAdt->matrix[i][j].name;
                 char * auxB = stationsAdt->matrix[j][i].name;
-                printf("%s,HASTA %s, %d VECES\n", auxA, auxB,stationsAdt->matrix[i][j].quantTripsAtoB);
+                printf("%s,HASTA %s, %d VECES\n", auxA, auxB,stationsAdt->matrix[i][j].quanTripsAtoB);
             }
         }
     }
