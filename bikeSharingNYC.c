@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "stationsADT.h"
+#include "queries.h"
+#include "fileParsing.h"
 
 #define NYC 0
 #define DELIM ";"
