@@ -7,7 +7,6 @@
 
 #include <stddef.h>
 
-
 #ifndef _stations_h_
 #define _stations_h_
 #define NYC 0
@@ -15,6 +14,7 @@
 #define MONTHS 12
 
 typedef struct stationsCDT *stationsADT;
+
 
 /*
     Funcion: newStations
@@ -26,13 +26,20 @@ typedef struct stationsCDT *stationsADT;
 
 stationsADT newStations();
 
-void newMat(stationsADT stationsAdt);
+/*
+    Funcion: newMat
+    Uso: newMat(stations);
+    ------------------------------
+    Esta funcion crea una matriz de dimStations*dimStations,
+    con todas sus casillas inicializadas en cero. La matriz sirve para
+    registrar los viajes de i->j (Acceso: mat[i][j]).
+*/
 
- void printMatrix(stationsADT stationsAdt);
+void newMat(stationsADT stationsAdt);
 
 /*
     Funcion: freeStations
-    Uso: freeStations(stations)
+    Uso: freeStations(stations);
     ---------------------------
     Esta funcion libera los espacios de memoria asociados con "stations".
 */
@@ -41,7 +48,7 @@ void freeStations(stationsADT);
 
 /*
     Funcion: addStations
-    Uso: addStations(estaciones, archivo, indentificador)
+    Uso: addStations(stations, file, identifier);
     -----------------------------------------------------
     Esta funcion agrega las estaciones que contiene el archivo.
     A su vez, posee un "identificador" para cada ciudad correspondiente,
@@ -50,34 +57,41 @@ void freeStations(stationsADT);
     . 1 si la ciudad es Montreal, o un tipo de formato como esta.
 */
 
- void addStation(stationsADT stationsAdt, size_t id, char* name);
-
-/*
-    Funcion: printStations
-    Uso: printStations(estaciones)
-    -------------------------------
-    Esta funcion se encarga de imprimir en pantalla las
-    caracteristicas de todas las estaciones. Mas que nada
-    se le da un uso en los testing. (NO VA A ESTAR EN EL ULTIMO ARCHIVO XQ NO FORMA PARTE DEL BACK-END)
-*/
-
-void printStations(stationsADT stationsAdt);
+void addStation(stationsADT stationsAdt, size_t id, char* name);
 
 /*
     Funcion: freeStations
-    Uso: freeStations(estaciones)
+    Uso: freeStations(stations);
     ------------------------------
-    Esta funcion se encarga de liberar la memoria ocupada
+    Esta funcion se encarga de liberar toda la memoria ocupada
     por el ADT.
 */
-
-void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember);
 
 void freeStations(stationsADT stationsAdt);
 
 /*
+    Funcion: processEvent
+    Uso: processEvent(stations. month, fromId, toId, isMember);
+    ------------------------------
+    Esta funcion se encarga de procesar un único evento, completando
+    los campos correspondientes en el TAD y en la matriz.
+*/
+
+void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember);
+
+/*
+    Funcion: rearrangeByTrip
+    Uso: arrangeByTrip(stations);
+    ------------------------------
+    Esta funcion crea una nueva lista ordenada descendentemente
+    según quanTripsMember.
+*/
+
+void rearrangeByTrip(stationsADT stationsAdt);
+
+/*
     Funcion: toBeginTrip
-    Uso: toBeginTrip(estaciones)
+    Uso: toBeginTrip(stations);
     ----------------------------
     Esta funcion hace que al iterador por cantidad de viajes
     "apunte" hacia el comienzo de la lista ordenada descendentemente
@@ -86,13 +100,9 @@ void freeStations(stationsADT stationsAdt);
 
 void toBeginTrip(stationsADT stationsAdt);
 
-void printLinks(stationsADT stationsAdt);
-
-void printSubStations(stationsADT stationsAdt);
-
 /*
     Funcion: hasNextTrip
-    Uso: hasNextTrip(estaciones)
+    Uso: hasNextTrip(stations);
     ----------------------------
     Esta funcion verifica si el iterador por cantidad de viajes
     tiene un elemento siguiente, para evitar problemas de memoria.
@@ -102,7 +112,7 @@ size_t hasNextTrip(stationsADT stationsAdt);
 
 /*
     Funcion: nextTrip
-    Uso: nextTrip(estaciones)
+    Uso: nextTrip(stations);
     -------------------------
     Esta funcion "apunta" el iterador por cantidad de viajes
     a su elemento siguiente, verificando previamente que este
@@ -111,20 +121,111 @@ size_t hasNextTrip(stationsADT stationsAdt);
 
 size_t nextTrip(stationsADT stationsAdt);
 
-char *getName(stationsADT stationsAdt, size_t flag);
+/*
+    Funcion: toBeginName
+    Uso: toBeginName(stations);
+    ----------------------------
+    Esta funcion hace que al iterador por nombre
+    "apunte" hacia el comienzo de la lista ordenada lexicográficamente.
+*/
+
+void toBeginName(stationsADT stationsAdt);
+
+/*
+    Funcion: hasNextName
+    Uso: hasNextName(stations);
+    ----------------------------
+    Esta funcion verifica si el iterador por orden alfabético
+    tiene un elemento siguiente, para evitar problemas de memoria.
+*/
+
+size_t hasNextName(stationsADT stationsAdt);
+
+/*
+    Funcion: nextName
+    Uso: nextName(stations);
+    -------------------------
+    Esta funcion "apunta" el iterador por nombre
+    a su elemento siguiente, verificando previamente que este
+    exista. Si se pudo mover, retorna 1. Si no, 0.
+*/
+
+size_t nextName(stationsADT stationsAdt);
+
+/*
+    Funcion: getName
+    Uso: name = getName(stations, flag);
+    -------------------------
+    Esta funcion retorna una copia del "name"
+    del iterador correspondiente según el valor
+    de la flag: 1 = itName, 0 = itTrip.
+*/
+
+char * getName(stationsADT stationsAdt, size_t flag);
+
+/*
+    Funcion: getTotalMemberTrips
+    Uso: count = getTotalMemberTrips(stations, flag);
+    -------------------------
+    Esta funcion retorna una copia del "quanTripsMember"
+    del iterador correspondiente según el valor
+    de la flag: 1 = itName, 0 = itTrip.
+*/
 
 size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag);
 
+/*
+    Funcion: getTripsByMonth
+    Uso: monthlyCount[i] = getTripsByMonth(stationsAdt, i+1);
+    -------------------------
+    Esta funcion retorna una copia de la cantidad de viajes
+    comenzados en la estacion itName en e "month" correspondiente.
+*/
+
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month);
 
- void toBeginName(stationsADT stationsAdt);
-
- size_t hasNextName(stationsADT stationsAdt);
-
- size_t nextName(stationsADT stationsAdt);
+/*
+    Funcion: getTripsAtoB
+    Uso: AB = getTripsAtoB(stations, indexA, indexB);
+    -------------------------
+    Esta funcion busca en la stationMat la cantidad de viajes iniciados
+    en la estación A y finalizados en la estación B. Retorna una copia
+    del valor.
+*/
 
 size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB);
 
+/*
+    Funcion: getMatrixName
+    Uso: name = getMatrixName(stations, indexA, indexB);
+    -------------------------
+    Esta funcion retorna una copia del "name" almacenado en
+    stationMat[indexA][indexB], que se corresponde al nombre
+    de la estación en la que comienzan lops viaje en esa posición
+    de la matriz.
+*/
+
 char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB);
+
+/*
+    Funcion: getDim
+    Uso: dim = getDim(stations);
+    -------------------------
+    Esta funcion retorna una copia de la cantidad de estaciones
+    en stations.
+*/
+
+size_t getDim(stationsADT stationsAdt);
+
+
+
+
+
+
+
+void printMatrix(stationsADT stationsAdt);
+void printStations(stationsADT stationsAdt);
+void printLinks(stationsADT stationsAdt);
+void printSubStations(stationsADT stationsAdt);
 
 #endif
