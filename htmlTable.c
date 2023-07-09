@@ -11,7 +11,6 @@
 struct table {
 	FILE * file;
 	unsigned int columns;
-	
 };
 
 static void addNodes(const char * fatherNode, const char * childNode, htmlTable table, va_list arg);
@@ -41,22 +40,19 @@ htmlTable newTable (const char * fileName, unsigned int columns, ...) {
     return table;
 }
 
-void
-addHTMLRow(const htmlTable table, ...) {
+void addHTMLRow(const htmlTable table, ...) {
     va_list args;
     va_start(args, table);
     addNodes(TABLE_ROW, TABLE_DATA, table, args);
 }
 
-void
-closeHTMLTable(htmlTable table) {
+void closeHTMLTable(htmlTable table) {
     fprintf(table->file, "</%s></table></html>", TABLE_BODY);
     fclose(table->file);
     free(table);
 }
 
-static void
-addNodes(const char * fatherNode, const char * childNode, htmlTable table, va_list arg) {
+static void addNodes(const char * fatherNode, const char * childNode, htmlTable table, va_list arg) {
     fprintf(table->file, "<%s>", fatherNode);
     for (int i = 0; i < table->columns; i++) {
         fprintf(table->file, "<%s>%s</%s>", childNode, va_arg(arg, char *), childNode);
