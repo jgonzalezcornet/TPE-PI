@@ -63,7 +63,7 @@ static void * safeCalloc(size_t quan, size_t bytes) {
 
 /* ----- Funciones para resolver el procesamiento de datos a un TAD ----- */
 
-static struct stationByName *addStationRec(struct stationByName * first, size_t id, char *name) {
+static struct stationByName * addStationRec(struct stationByName * first, size_t id, char *name) {
     int c;
     if(first == NULL || (c = strcasecmp(first->name, name)) > 0) {
         stationByName * aux = safeCalloc(1, sizeof(stationByName));
@@ -195,7 +195,7 @@ void printLinks(stationsADT stationsAdt) {
 
 /* ----- Funciones para crear la lista ordenada por viajes ----- */
 
-stationByTrip * createStationByTripNode(char * name, size_t quanTripsMember) {
+static stationByTrip * createStationByTripNode(char * name, size_t quanTripsMember) {
 	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip));
 	newNode->name = safeMalloc(strlen(name)+1);
 	strcpy(newNode->name, name);
@@ -204,7 +204,7 @@ stationByTrip * createStationByTripNode(char * name, size_t quanTripsMember) {
 	return newNode;
 }
 
-void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
+static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
 	stationByTrip * current = stationsAdt->firstByTrip;
 	if (current == NULL || newNode->quanTripsMember > current->quanTripsMember || (newNode->quanTripsMember == current->quanTripsMember && strcasecmp(newNode->name, current->name)<0)) {
 		newNode->tailByTrip = current;
