@@ -208,11 +208,11 @@ static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
 	stationByTrip * current = stationsAdt->firstByTrip;
 	if (current == NULL || newNode->quanTripsMember > current->quanTripsMember || (newNode->quanTripsMember == current->quanTripsMember && strcasecmp(newNode->name, current->name)<0)) {
 		newNode->tailByTrip = current;
-		stations->firstByTrip = newNode;
+		stationsAdt->firstByTrip = newNode;
 	}
 	else {
 		while (current->tailByTrip != NULL && (current->tailByTrip->quanTripsMember > newNode->quanTripsMember || (current->tailByTrip->quanTripsMember == newNode->quanTripsMember && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
-			current = currrent->tailByTrip
+			current = current->tailByTrip;
 		}
 		newNode->tailByTrip = current->tailByTrip;
 		current->tailByTrip = newNode;
