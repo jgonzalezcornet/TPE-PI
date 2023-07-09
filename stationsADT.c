@@ -311,6 +311,10 @@ static void freeMatrix(stationMat ** matrix, size_t dim) {
     stationMat * aux;
     for (int i = 0; i < dim; i++) {
         aux = matrix[i];
+        for (int j = 0; j < dim; j++){
+            if(aux[j].name != NULL)
+                free(aux[j].name);
+        }
         free(aux);
     }
     free(matrix);
