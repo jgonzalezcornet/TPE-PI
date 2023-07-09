@@ -42,16 +42,17 @@ int main(int argc, char *argv[]) {
     }
     
     // Carga de datos
-    parseEvents(stationsAdt, events, MON);
     parseStations(stationsAdt, stations, MON);
+    parseEvents(stationsAdt, events, MON);
 
-    // Resolucion de las queries
+    // Resolucion de las queries (tanto en HTML como en CSV)
     htmlTable tableQuery1 = query1(stationsAdt, que1);
     htmlTable tableQuery2 = query2(stationsAdt, que2);
     htmlTable tableQuery3 = query3(stationsAdt, que3);
 
     // Liberacion de memoria
     freeStations(stationsAdt);
+    
     // Cerramos los files que hayan quedado abiertos
     closeFiles(fileCount, files);
     
