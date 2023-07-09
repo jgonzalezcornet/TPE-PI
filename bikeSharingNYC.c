@@ -20,10 +20,10 @@ int main(int argc, char *argv[]) {
     errno = 0;
     FILE * events = fopen(argv[1], "r");
     FILE * stations = fopen(argv[2], "r");
-    FILE * query1 = fopen(query1.csv, "wt");
-    FILE * query2 = fopen(query2.csv, "wt");
-    FILE * query3 = fopen(query3.csv, "wt");
-    FILE * files[] = {events, stations, query1, query2, query3};
+    FILE * que1 = fopen(query1.csv, "wt");
+    FILE * que2 = fopen(query2.csv, "wt");
+    FILE * que3 = fopen(query3.csv, "wt");
+    FILE * files[] = {events, stations, que1, que2, que3};
     size_t fileCount = QUERIES + argc - 1;
     
     if (errno==ENOENT){
@@ -40,41 +40,17 @@ int main(int argc, char *argv[]) {
     }
     
     // Carga de datos
-    parseEvents(stationsAdt, events, NYC);
     parseStations(stationsAdt, stations, NYC);
+    parseEvents(stationsAdt, events, NYC);
 
-   /* -------------- Resolución de las queries en HTML --------------*/
-    query1(stationsAdt);
-    query2(stationsAdt);
-    query3(stationsAdt);
-
-    
-    /* -------------- Resolución de la query 1 (csv) --------------*/
-    fprintf(query1, "Station;StartedTrips\n");
-    toBeginTrip(stationsAdt);
-    do {
-        fprintf(query1, "%s;%zu\n", stationsAdt->itTrip->name, stationsAdt->itTrip->quanTripsTotal);
-    } while (nextTrip(stationsAdt));
-    fclose(query1);
-
-    /* -------------- Resolución de la query 2 (csv) --------------*/
-
-    
-    /* -------------- Resolución de la query 3 (csv) --------------*/
-    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");
-    toBeginName(stationsAdt);
-    size_t count;
-    do {
-        for (size_t i=0 ; i<MONTHS ; i++){
-            count = stationsAdt->itName->quanTrips[i];
-            fprintf(query3, "%zu;", count);
-        }
-        fprintf(query3, "%s\n", stationsAdt->itName->name);
-    } while (nextName(stationsAdt));
-    fclose(query3);
+    // Resolución de las queries (tanto en HTML como en CSV)
+    htmlTable tableQuery1 = query1(stationsAdt, que1);
+    htmlTable tableQuery2 = query2(stationsAdt, que2);
+    htmlTable tableQuery3 = query3(stationsAdt, que3);
 
     // Liberacion de memoria
     freeStations(stationsAdt);
+    
     // Cerramos los files que hayan quedado abiertos
     closeFiles(fileCount, files);
     
@@ -88,5 +64,4 @@ void closeFiles (size_t count, FILE * files[]){
         }
     }
     return;
-}
 }
