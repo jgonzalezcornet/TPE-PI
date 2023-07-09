@@ -145,7 +145,7 @@ void printMatrix(stationsADT stationsAdt) {
             if( stationsAdt->matrix[i][j].name != NULL && stationsAdt->matrix[j][i].name != NULL){
                 char * auxA = stationsAdt->matrix[i][j].name;
                 char * auxB = stationsAdt->matrix[j][i].name;
-                printf("%s,HASTA %s, %d VECES\n", auxA, auxB,stationsAdt->matrix[i][j].quantTripsAtoB);
+                printf("%s,HASTA %s, %d VECES\n", auxA, auxB,stationsAdt->matrix[i][j].quanTripsAtoB);
             }
         }
     }
@@ -208,11 +208,11 @@ static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
 	stationByTrip * current = stationsAdt->firstByTrip;
 	if (current == NULL || newNode->quanTripsMember > current->quanTripsMember || (newNode->quanTripsMember == current->quanTripsMember && strcasecmp(newNode->name, current->name)<0)) {
 		newNode->tailByTrip = current;
-		stations->firstByTrip = newNode;
+		stationsAdt->firstByTrip = newNode;
 	}
 	else {
 		while (current->tailByTrip != NULL && (current->tailByTrip->quanTripsMember > newNode->quanTripsMember || (current->tailByTrip->quanTripsMember == newNode->quanTripsMember && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
-			current = currrent->tailByTrip
+			current = current->tailByTrip;
 		}
 		newNode->tailByTrip = current->tailByTrip;
 		current->tailByTrip = newNode;
