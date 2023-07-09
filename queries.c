@@ -56,7 +56,7 @@ htmlTable query3(stationsADT stationsAdt, FILE * query3) {
     size_t count;
     do {
         for(size_t i=0 ; i<MONTHS ; i++) {
-            count = getTripsByMonth(stationsAdt, i+1);
+            count = getTripsByMonth(stationsAdt, i);
             fprintf(query3, "%zu;", count);
         }
         fprintf(query3, "%s\n", getName(stationsAdt, 1));           // luego de imprimir todos los datos por mes en el CSV, cerramos la linea imprimiendo el nombre\n
