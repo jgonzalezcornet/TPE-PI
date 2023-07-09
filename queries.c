@@ -3,22 +3,22 @@
 
 #define MAX_DIGITS 10
 
-static char *unsignedIntToString(size_t num) {
-    char *s = malloc(MAX_DIGITS);
+static char * unsignedIntToString(size_t num) {
+    char * s = malloc(MAX_DIGITS);
     snprintf(s, sizeof s, "%zu", num);
     return s;
 }
 
-htmlTable query1(stationsADT stationsAdt, FILE *query1) {
-    htmlTable table = newTable("query1.html", 2, "Station", "StartedTrips");
-    fprintf(query1, "Station;StartedTrips\n");
+htmlTable query1(stationsADT stationsAdt, FILE * query1) {
+    htmlTable table = newTable("query1.html", 2, "Station", "StartedTrips");    // imprimimos el encabezado en el HTML
+    fprintf(query1, "Station;StartedTrips\n");                                  // imprimimos el encabezado en el CSV
+    rearrangeByTrip(stationsAdt);
     toBeginTrip(stationsAdt);
-
-    do{
-        char *name = getName(stationsAdt, 0);
+    do {
+        char * name = getName(stationsAdt, 0);
         size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
-        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips));
-        fprintf(query1, "%s;%zu\n", name, totalMemberTrips);
+        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips));    // agregamos la fila al HTML
+        fprintf(query1, "%s;%zu\n", name, totalMemberTrips);                  // imprimimos la fila en el CSV
     } while(hasNextTrip(stationsAdt));
 
     closeHTMLTable(table);
@@ -26,37 +26,40 @@ htmlTable query1(stationsADT stationsAdt, FILE *query1) {
     return table;
 }
 
-htmlTable query2(stationsADT stationsAdt, FILE *query2) {
-    htmlTable table = newTable("query2.html", 4, "StationA", "StationB", "Trips A->B", "Trips B->As");
-    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");
+htmlTable query2(stationsADT stationsAdt, FILE * query2) {    
+    htmlTable table = newTable("query2.html", 4, "StationA", "StationB", "Trips A->B", "Trips B->A");    // imprimimos el encabezado en el HTML
+    fprintf(query3, "StationA;StationB;Trips A->B;Trips B->A");                                          // imprimimos el encabezado en el CSV
 
-    size_t dim = getDim(stationsAdt);
+    size_t dim = getDim(stationsAdt);        // siendo la matriz de n*n, obtenemos n (cantidad de estaciones)
 
     for(size_t i = 0; i < dim; i++) {
         for(size_t j = 0; j < dim; j++) {
-            if(i != j) {
+            if(i != j) {                     // pues no hay que considerar los viajes circulares
                 size_t AB = getTripsAtoB(stationsAdt, i, j);
                 size_t BA = getTripsAtoB(stationsAdt, j, i);
-                char *nameA = getMatrixName(stationsAdt, i, j);
-                char *nameB = getMatrixName(stationsAdt, j, i);
-                fprintf(query3, );
+                char * nameA = getMatrixName(stationsAdt, i, j);
+                char * nameB = getMatrixName(stationsAdt, j, i);
+                addHTMLRow(table, nameA, nameB, unsignedIntToString(AB), unsignedIntToString(BA));        // agregamos la fila al HTML
+                fprintf(query3, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA);                                 // imprimimos la fila en el CSV
             }
         }
     }
+    closeHTMLTable(table);
+    fclose(query3);
+    return table;
 }
 
-htmlTable query3(stationsADT stationsAdt, FILE *query3) {
-    htmlTable table = newTable("query3.html", 13, "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", "Station");
-    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");
+htmlTable query3(stationsADT stationsAdt, FILE * query3) {
+    htmlTable table = newTable("query3.html", 13, "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", "Station");    // imprimimos el encabezado en el HTML
+    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");                                                                      // imprimimos el encabezado en el CSV
     toBeginName(stationsAdt);
-
     size_t count;
-    do{
+    do {
         for(size_t i=0 ; i<MONTHS ; i++) {
-            count = getTripsByMonth(stationsAdt, i);
+            count = getTripsByMonth(stationsAdt, i+1);
             fprintf(query3, "%zu;", count);
         }
-        fprintf(query3, "%s\n", getName(stationsAdt, 1));
+        fprintf(query3, "%s\n", getName(stationsAdt, 1));           // luego de imprimir todos los datos por mes en el CSV, cerramos la linea imprimiendo el nombre\n
     } while(nextName(stationsAdt));
 
     closeHTMLTable(table);
