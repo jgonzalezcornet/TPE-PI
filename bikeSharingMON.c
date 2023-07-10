@@ -20,12 +20,12 @@ int main(int argc, char *argv[]) {
 
     // Abrimos todos los archivos, estableciendo el errno en 0 para poder chequear si hay errores en la apertura
     errno = 0;
-    FILE *events = fopen(argv[1], "r");
-    FILE *stations = fopen(argv[2], "r");
-    FILE *que1 = fopen("query1.csv", "wt");
-    FILE *que2 = fopen("query2.csv", "wt");
-    FILE *que3 = fopen("query3.csv", "wt");
-    FILE *files[] = {events, stations, query1, query2, query3};
+    FILE * events = fopen(argv[1], "r");
+    FILE * stations = fopen(argv[2], "r");
+    FILE * que1 = fopen("query1.csv", "wt");
+    FILE * que2 = fopen("query2.csv", "wt");
+    FILE * que3 = fopen("query3.csv", "wt");
+    FILE * files[] = {events, stations, query1, query2, query3};
     size_t fileCount = QUERIES + argc - 1;
     
     if(errno == ENOENT) {
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     }
     
     stationsADT stationsAdt = newStations();
-    if(stationsAdt == NULL) {
+    if(stationsAdt == NULL || errno == ENOMEM) {
         fprintf(stderr, "No hay memoria suficiente para llevar a cabo el programa.\n");
         closeFiles(fileCount, files);
         exit(1);

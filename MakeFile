@@ -1,13 +1,13 @@
-COMPILER	= gcc
-FLAGS		= -pedantic -std=c99 -Wall
-DEBUG		= -fsanitize=address -g
+COMPILER = gcc
+FLAGS = -pedantic -std=c99 -Wall
+DEBUG = -fsanitize=address -g
 
 OUTPUT_FILE_MON	= bikeSharingMON
 OUTPUT_FILE_NYC	= bikeSharingNYC
 
-QUERIES		= query1.csv query2.csv query3.csv
+QUERIES = query1.csv query2.csv query3.csv
 
-DEPENDENCIES	= stationsADT.c queries.c fileParsing.c htmlTable.c
+DEPENDENCIES = stationsADT.c queries.c fileParsing.c htmlTable.c
 
 all: MON NYC
 

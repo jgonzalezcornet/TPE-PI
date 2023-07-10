@@ -25,8 +25,8 @@
 	- los flags adicionales seran: -fsanitize=address y -g
 
 ## ELIMINAR ARCHIVOS
-	- 'make clean'		para borrar todos los archivos
-	- 'make cleanQueries'	para borrar los archivos .csv creados por el programa
-	- 'make clean MON'	para borrar el ejecutable MON y sus archivos objeto
-	- 'make clean NYC' 	para borrar el ejecutable NYC y sus archivos objeto
+	- 'make clean'		   para borrar todos los archivos
+	- 'make cleanQueries'  para borrar los archivos .csv creados por el programa
+	- 'make clean MON'	   para borrar el ejecutable MON y sus archivos objeto
+	- 'make clean NYC' 	   para borrar el ejecutable NYC y sus archivos objeto
 
