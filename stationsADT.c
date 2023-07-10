@@ -235,7 +235,7 @@ size_t hasNextTrip(stationsADT stationsAdt) {
 
 size_t nextTrip(stationsADT stationsAdt) {
     size_t c;
-    if(c = hasNextTrip(stationsAdt)) {
+    if((c = hasNextTrip(stationsAdt))) {
         stationsAdt->itTrip = stationsAdt->itTrip->tailByTrip;
     }
     return c;
@@ -253,7 +253,7 @@ size_t hasNextName(stationsADT stationsAdt) {
 
 size_t nextName(stationsADT stationsAdt) {
 	size_t c;
-	if (c = hasNextName(stationsAdt)){
+	if ((c = hasNextName(stationsAdt))){
 		stationsAdt->itName = stationsAdt->itName->tailByName;
 	}
 	return c;
