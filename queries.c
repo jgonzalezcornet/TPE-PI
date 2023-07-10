@@ -4,7 +4,7 @@
 #define MAX_DIGITS 10
 
 static char * unsignedIntToString(size_t num) {
-    char * s = malloc(MAX_DIGITS);
+    char * s = safeMalloc(MAX_DIGITS);
     snprintf(s, sizeof s, "%zu", num);
     return s;
 }
@@ -17,7 +17,7 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
     do {
         char * name = getName(stationsAdt, 0);
         size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
-        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips));    // agregamos la fila al HTML
+        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips(stationsAdt, 0));    // agregamos la fila al HTML
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);                  // imprimimos la fila en el CSV
     } while(hasNextTrip(stationsAdt));
 
@@ -28,7 +28,7 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
 
 htmlTable query2(stationsADT stationsAdt, FILE * query2) {    
     htmlTable table = newTable("query2.html", 4, "StationA", "StationB", "Trips A->B", "Trips B->A");    // imprimimos el encabezado en el HTML
-    fprintf(query3, "StationA;StationB;Trips A->B;Trips B->A");                                          // imprimimos el encabezado en el CSV
+    fprintf(query2, "StationA;StationB;Trips A->B;Trips B->A");                                          // imprimimos el encabezado en el CSV
 
     size_t dim = getDim(stationsAdt);        // siendo la matriz de n*n, obtenemos n (cantidad de estaciones)
 
@@ -40,12 +40,12 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2) {
                 char * nameA = getMatrixName(stationsAdt, i, j);
                 char * nameB = getMatrixName(stationsAdt, j, i);
                 addHTMLRow(table, nameA, nameB, unsignedIntToString(AB), unsignedIntToString(BA));        // agregamos la fila al HTML
-                fprintf(query3, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA);                                 // imprimimos la fila en el CSV
+                fprintf(query2, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA);                                 // imprimimos la fila en el CSV
             }
         }
     }
     closeHTMLTable(table);
-    fclose(query3);
+    fclose(query2);
     return table;
 }
 
