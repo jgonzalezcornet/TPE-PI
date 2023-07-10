@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "queries.h"
 #include "stationsADT.h"
 #include "fileParsing.h"
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
     FILE * que1 = fopen("query1.csv", "wt");
     FILE * que2 = fopen("query2.csv", "wt");
     FILE * que3 = fopen("query3.csv", "wt");
-    FILE * files[] = {events, stations, query1, query2, query3};
+    FILE * files[] = {events, stations, que1, que2, que3};
     size_t fileCount = QUERIES + argc - 1;
     
     if(errno == ENOENT) {
