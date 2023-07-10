@@ -39,7 +39,7 @@ struct stationsCDT {
 
 /* ----- Funciones para alocar memoria de forma segura ----- */
 
-static void * safeMalloc(size_t bytes) {
+void * safeMalloc(size_t bytes) {
     void * mem = malloc(bytes);
     if(mem == NULL || errno == ENOMEM) {
         fprintf(stderr, "Error de memoria");
@@ -48,7 +48,7 @@ static void * safeMalloc(size_t bytes) {
     return mem;
 }
 
-static void * safeCalloc(size_t quan, size_t bytes) {
+void * safeCalloc(size_t quan, size_t bytes) {
     void * mem = calloc(quan, bytes);
     if(mem == NULL || errno == ENOMEM) {
         fprintf(stderr, "Error de memoria");
