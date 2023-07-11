@@ -26,5 +26,5 @@ cleanNYC:
 	rm -rf $(OUTPUT_FILE_NYC) *.o
 
 cleanQueries:
-	rm -f query1.csv
+	rm -f $(QUERIES)
 
