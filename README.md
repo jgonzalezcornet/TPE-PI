@@ -20,13 +20,11 @@
 		1. path al archivo con los datos sobre los viajes (ej: bikesNYC.csv)
 		2. path al archivo con los datos sobre las estaciones (ej: stationsMON.csv)
 
-## DEBUGGING
-	- correr el comando 'make debug' y se crearan ambos ejecutables.
-	- los flags adicionales seran: -fsanitize=address y -g
-
 ## ELIMINAR ARCHIVOS
 	- 'make clean'		   para borrar todos los archivos
 	- 'make cleanQueries'  para borrar los archivos .csv creados por el programa
 	- 'make clean MON'	   para borrar el ejecutable MON y sus archivos objeto
 	- 'make clean NYC' 	   para borrar el ejecutable NYC y sus archivos objeto
+
+* en caso de que se creen los directorios bikeSharingMON.dSYM y bikeSharingNYC.dSYM, debera eliminarlos manualmente
 
