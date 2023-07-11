@@ -17,7 +17,7 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
     do {
         char * name = getName(stationsAdt, 0);
         size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
-        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips(stationsAdt, 0));    // agregamos la fila al HTML
+        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips(stationsAdt, 0)));    // agregamos la fila al HTML
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);                  // imprimimos la fila en el CSV
     } while(nextTrip(stationsAdt));
 
@@ -38,8 +38,8 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2) {
                 size_t AB = getTripsAtoB(stationsAdt, i, j);
                 size_t BA = getTripsAtoB(stationsAdt, j, i);
                 char * nameA = getMatrixName(stationsAdt, i, j);
-                if (nameA != NULL){
-                    char * nameB = getMatrixName(stationsAdt, j, i);
+                char * nameB = getMatrixName(stationsAdt, j, i);
+                if (nameA != NULL && nameB != NULL){
                     addHTMLRow(table, nameA, nameB, unsignedIntToString(AB), unsignedIntToString(BA));        // agregamos la fila al HTML
                     fprintf(query2, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA);                                 // imprimimos la fila en el CSV
                 }

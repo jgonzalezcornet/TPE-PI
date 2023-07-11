@@ -56,25 +56,3 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
         processEvent(stationsAdt, month, fromId, toId, isMember);
     }
 }
-
-int main()
-{
-
-    clock_t start,end;
-    double execution_time;
-    start = clock();
-    FILE *bikes = fopen("bikesMON.csv","rt");
-    FILE *stations = fopen("stationsMON.csv","rt");
-
-    stationsADT stationsAdt = newStations();
-
-    parseStations(stationsAdt,stations,MON);
-    parseEvents(stationsAdt,bikes,MON);
-    printMatrix(stationsAdt);
-
-    end = clock();
-    execution_time = ((double)(end - start))/CLOCKS_PER_SEC;
-    printf("El tiempo de ejecucion fue de %f\n",execution_time);
-    freeStations(stationsAdt);
-    return 0;
-}
