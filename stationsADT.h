@@ -243,14 +243,5 @@ void * safeMalloc(size_t bytes);
 
 void * safeCalloc(size_t quan, size_t bytes);
 
-
-
-
-
-
-void printMatrix(stationsADT stationsAdt);
-void printStations(stationsADT stationsAdt);
-void printLinks(stationsADT stationsAdt);
-void printSubStations(stationsADT stationsAdt);
-
+void fillOrderedIds(stationsADT stationsAdt);
 #endif

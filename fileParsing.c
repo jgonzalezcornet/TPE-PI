@@ -25,6 +25,7 @@ void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
         }
         addStation(stationsAdt, id, name);
     }
+    fillOrderedIds(stationsAdt);
 }
 
 void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
@@ -53,4 +54,5 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
         month = atoi(strtok(NULL, "-"));
         processEvent(stationsAdt, month, fromId, toId, isMember);
     }
+    rearrangeByTrip(stationsAdt); // crea la lista ordenada por trips
 }

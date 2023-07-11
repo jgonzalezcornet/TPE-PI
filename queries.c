@@ -12,7 +12,6 @@ static char * unsignedIntToString(size_t num) {
 htmlTable query1(stationsADT stationsAdt, FILE * query1) {
     htmlTable table = newTable("query1.html", 2, "Station", "StartedTrips");    // imprimimos el encabezado en el HTML
     fprintf(query1, "Station;StartedTrips\n");                                  // imprimimos el encabezado en el CSV
-    rearrangeByTrip(stationsAdt);
     toBeginTrip(stationsAdt);
 
     do {

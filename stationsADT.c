@@ -10,6 +10,7 @@
 
 typedef struct stationByName {
     size_t id;
+    size_t alfaId;
     char * name;
     size_t quanTripsMonth[MONTHS];
     size_t quanTripsMember;
@@ -33,7 +34,7 @@ struct stationsCDT {
     struct stationByTrip * itTrip;
     struct stationByName * itName;
     stationMat ** matrix;
-    char ** names;
+    struct stationByName ** orderedIds;
     size_t dim;
 };
 
@@ -44,7 +45,7 @@ void * safeMalloc(size_t bytes) {
     if(mem == NULL) {
         fprintf(stderr, "Error de memoria");
         fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
-	errno = ENOMEM;
+	    errno = ENOMEM;
     }
     return mem;
 }
@@ -54,9 +55,73 @@ void * safeCalloc(size_t quan, size_t bytes) {
     if(mem == NULL) {
         fprintf(stderr, "Error de memoria");
         fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
-	errno = ENOMEM;
+	    errno = ENOMEM;
     }
     return mem;
+}
+
+/* ---- Funciones para el vector de punteros a estaciones ----- */
+
+static int stationComp(const void * v1, const void * v2) {
+    const stationByName * p1 = (stationByName *) v1;
+    const stationByName * p2 = (stationByName *) v2;
+
+    if(p1->id < p2->id) {
+        return -1;
+    } else if(p1->id > p2->id) {
+        return 1;
+    }
+    return 0;
+}
+
+static void swap(struct stationByName * p1, struct stationByName * p2) {
+    stationByName temp = *p2;
+    *p2 = *p1;
+    *p1 = temp;
+}
+
+static void bubbleSort(struct stationByName * v, size_t dim) {
+    for(size_t i = 0; i < dim - 1; i++) {
+        for(size_t j = 0; j < dim - i - 1; j++) {
+            if(stationComp(&v[j], &v[j + 1]) > 0) {
+                swap(&v[j], &v[j + 1]);
+            }
+        }
+    }
+}
+
+static void traverseListToFillArray(stationByName * first, size_t i, struct stationByName ** ids) {
+    if(first == NULL) {
+        return;
+    }
+    first->alfaId = i;
+    ids[i] = first;
+    traverseListToFillArray(first->tailByName, i + 1, ids);
+}
+
+void fillOrderedIds(stationsADT stationsAdt) {
+    stationsAdt->orderedIds = safeMalloc(stationsAdt->dim * sizeof(struct  stationByName *));
+    traverseListToFillArray(stationsAdt->firstByName, 0, stationsAdt->orderedIds);
+    bubbleSort(stationsAdt->orderedIds, stationsAdt->dim);
+    /// ahora, el arreglo esta ordenado por ids
+}
+
+static struct stationByName * getStationById(stationsADT stationsAdt, size_t id) {
+    int low = 0, high = stationsAdt->dim;
+
+    while(high - low > 1) {
+        int mid = (low + high) / 2;
+        if(stationsAdt->orderedIds[mid]->id <= id) {
+            low = mid;
+        } else {
+            high = mid;
+        }
+    }
+
+    if(stationsAdt->orderedIds[low]->id != id) {
+        return NULL;
+    }
+    return stationsAdt->orderedIds[low];
 }
 
 /* ----- Funciones para resolver el procesamiento de datos a un TAD ----- */
@@ -81,36 +146,6 @@ void addStation(stationsADT stationsAdt, size_t id, char * name) {
     stationsAdt->dim++;
 }
 
-void addTrip(stationByName * station, char ** nameA, char ** nameB, size_t * indexA, size_t * indexB, size_t month, size_t fromId, size_t toId, char isMember, char * existsIdFlag) {
-    size_t flagA, flagB;
-    flagA = flagB = 0;
-    size_t i = 0;
-
-    stationByName * aux = station;
-    while(!flagA || !flagB) {
-        if(aux == NULL) { // si llego a un NULL significa que alguno de los 2 id no coincide con alguna estacion.
-            *existsIdFlag = 0;
-            return;
-        }
-        if(aux->id == fromId) {
-            if(isMember) {
-                aux->quanTripsMember++;
-            }
-            aux->quanTripsMonth[month - 1]++;
-            *nameA = aux->name;
-            *indexA = i;
-            flagA = 1;
-        }
-        if(aux->id == toId) {
-            *nameB = aux->name;
-            *indexB = i;
-            flagB = 1;
-        }
-        aux = aux->tailByName;
-        i++;
-    }
-}
-
 static void addTripAtoB(stationMat ** mat, char * nameA, size_t indexA, size_t indexB) {
     if(mat[indexA][indexB].name == NULL) {
         mat[indexA][indexB].name = safeMalloc(MAX_LEN);
@@ -120,19 +155,33 @@ static void addTripAtoB(stationMat ** mat, char * nameA, size_t indexA, size_t i
 }
 
 void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
-    char existsIdFlag = 1;
+    stationByName * statFrom = getStationById(stationsAdt, fromId);
+    stationByName * statTo = getStationById(stationsAdt, toId);
     char ** nameA = safeMalloc(MAX_LEN);
-    char ** nameB = safeMalloc(MAX_LEN);
-    size_t indexA;
-    size_t indexB;
+    size_t flagA, flagB;
+    flagA = 0;
+    flagB = 0;
 
-    addTrip(stationsAdt->firstByName, nameA, nameB, &indexA, &indexB, month, fromId, toId, isMember, &existsIdFlag);
+    if(statFrom != NULL) {
+        if(isMember) {
+            statFrom->quanTripsMember++;
+        }
+        statFrom->quanTripsMonth[month - 1]++;
+        *nameA = statFrom->name;
+        flagA = 1;
+    }
 
-    if(existsIdFlag && indexA != indexB) {
+    if(statTo != NULL) {
+        flagB = 1;
+    }
+
+    size_t indexA = statFrom->alfaId;
+    size_t indexB = statTo->alfaId;
+
+    if(flagA  && flagB && indexA != indexB) {
         addTripAtoB(stationsAdt->matrix , *nameA, indexA, indexB);
     }
     free(nameA);
-    free(nameB);
 }
 
 void printMatrix(stationsADT stationsAdt) {
