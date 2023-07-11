@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stddef.h>
-#include <time.h>
 #include <string.h>
 #include "fileParsing.h"
 #include "stationsADT.h"

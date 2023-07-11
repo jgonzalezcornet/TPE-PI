@@ -212,7 +212,6 @@ static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
 		stationsAdt->firstByTrip = newNode;
 	}
 	else {
-        // OJO: refactorizar linea
 		while(current->tailByTrip != NULL && (current->tailByTrip->quanTripsMember > newNode->quanTripsMember || (current->tailByTrip->quanTripsMember == newNode->quanTripsMember && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
 			current = current->tailByTrip;
 		}
