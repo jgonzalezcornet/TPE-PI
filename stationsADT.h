@@ -243,5 +243,17 @@ void * safeMalloc(size_t bytes);
 
 void * safeCalloc(size_t quan, size_t bytes);
 
+/*
+    Funcion: fillOrderedIds
+    Uso: fillOrderedIds(stations);
+    ------------------------------
+    Esta funcion replica la lista alfabeticamente
+    ordenada en un arreglo, almacenando un puntero
+    al nodo y su id, y luego ordena el arreglo
+    ascendentemente por ids.
+*/
+
 void fillOrderedIds(stationsADT stationsAdt);
+
 #endif
+

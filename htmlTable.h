@@ -31,9 +31,10 @@ htmlTable newTable(const char * fileName, unsigned int columns, ...);
 */
 void addHTMLRow(htmlTable table, ...);
 
-/**
+/*
  * Finaliza la tabla, cierra el archivo y libera toda la memoria reservada
 */ 
 void closeHTMLTable(htmlTable table);
 
 #endif
+

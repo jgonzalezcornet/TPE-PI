@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stddef.h>
+#include <time.h>
+#include <string.h>
 #include "fileParsing.h"
 #include "stationsADT.h"
-#include <string.h>
-#include <time.h>
 
 #define MAX_CHAR 250
 
@@ -47,7 +47,8 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
             if(strcmp(strtok(NULL, delim), "member\n") == 0) { //la linea del archivo termina con un '\n'
                 isMember = 1;
             }
-        } else {
+        }
+	else {
             isMember = atoi(strtok(NULL, delim));
         }
         strtok(aux, "-");
@@ -56,3 +57,4 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
     }
     rearrangeByTrip(stationsAdt); // crea la lista ordenada por trips
 }
+

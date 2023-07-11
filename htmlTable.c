@@ -18,11 +18,11 @@ static void addNodes(const char * fatherNode, const char * childNode, htmlTable 
 htmlTable newTable (const char * fileName, unsigned int columns, ...) {
     errno = 0;
     FILE * file = fopen(fileName, "w");
-    if ( file == NULL ) {
+    if (file == NULL) {
 	    return NULL;
     }	    
     htmlTable table = malloc(sizeof(struct table));
-    if ( errno == ENOMEM ) {
+    if (errno == ENOMEM) {
 	    fclose(file);
 	    return NULL;
     }
@@ -60,3 +60,4 @@ static void addNodes(const char * fatherNode, const char * childNode, htmlTable 
     va_end(arg);
     fprintf(table->file, "</%s>", fatherNode);
 }
+

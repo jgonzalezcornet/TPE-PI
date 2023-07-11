@@ -10,3 +10,4 @@ htmlTable query2(stationsADT stationsAdt, FILE *query2);
 htmlTable query3(stationsADT stationsAdt, FILE *query3);
 
 #endif
+
