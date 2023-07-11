@@ -241,7 +241,7 @@ void * safeMalloc(size_t bytes);
     memoria suficiente.
 */
 
-void * safeCalloc(size_t bytes);
+void * safeCalloc(size_t quan, size_t bytes);
 
 
 
