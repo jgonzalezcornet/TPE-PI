@@ -1,7 +1,7 @@
  /*  
     Archivo: stationsADT.h
     ----------------------
-    Este archivo es la interfaz de un modulo que exporta
+    Este archivo es la interfaz del modulo que exporta
     el tipo asbtracto de dato "stations"
 */
 
@@ -30,7 +30,7 @@ stationsADT newStations();
     Funcion: newMat
     Uso: newMat(stations);
     ----------------------
-    Esta funcion crea una matriz de dimStations*dimStations,
+    Esta funcion crea una matriz de  dimension dimStations*dimStations,
     con todas sus casillas inicializadas en cero. La matriz sirve para
     registrar los viajes de i->j (Acceso: mat[i][j]).
 */
@@ -84,7 +84,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     Uso: arrangeByTrip(stations);
     -----------------------------
     Esta funcion crea una nueva lista ordenada descendentemente
-    según quanTripsMember.
+    por quanTripsMember.
 */
 
 void rearrangeByTrip(stationsADT stationsAdt);
@@ -201,11 +201,11 @@ size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB);
     ----------------------------------------------------
     Esta funcion retorna una copia del "name" almacenado en
     stationMat[indexA][indexB], que se corresponde al nombre
-    de la estación en la que comienzan lops viaje en esa posición
+    de la estación en la que comienzan los viaje en esa posicion
     de la matriz.
 */
 
-char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB);
+char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB);
 
 /*
     Funcion: getDim

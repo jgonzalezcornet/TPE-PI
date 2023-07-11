@@ -63,10 +63,9 @@ int main(int argc, char *argv[]) {
 
 void closeFiles (size_t count, FILE * files[]){
     for(size_t i=0; i < count; i++) {
-        if (files[i] != NULL){
+        if(files[i] != NULL) {
             fclose(files[i]);
         }
     }
-    return;
 }
 

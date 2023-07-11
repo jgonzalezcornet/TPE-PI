@@ -39,7 +39,7 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2) {
                 size_t BA = getTripsAtoB(stationsAdt, j, i);
                 char * nameA = getMatrixName(stationsAdt, i, j);
                 char * nameB = getMatrixName(stationsAdt, j, i);
-                if (AB > 0) {
+                if(AB > 0) {
                     addHTMLRow(table, nameA, nameB, unsignedIntToString(AB), unsignedIntToString(BA));        // agregamos la fila al HTML
                     fprintf(query2, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA);                                 // imprimimos la fila en el CSV
                 }

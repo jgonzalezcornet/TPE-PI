@@ -13,6 +13,7 @@
 void closeFiles (size_t count, FILE * files[]);
 
 int main(int argc, char *argv[]) {
+
     if(argc != 3) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
         fprintf(stdin, "Uso: ./bikeSharingNYC archivo_data_alquileres archivo_data_estaciones\n");
@@ -29,7 +30,7 @@ int main(int argc, char *argv[]) {
     FILE * files[] = {events, stations, que1, que2, que3};
     size_t fileCount = QUERIES + argc - 1;
     
-    if (errno == ENOENT){
+    if(errno == ENOENT){
         closeFiles(fileCount, files); // si alguno de los archivos no se pudo abrir, cierro todos
         fprintf(stderr, "No se pudo abrir alguno de los archivos.\n");
         exit(1);
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]) {
     
     stationsADT stationsAdt = newStations();
 
-    if (errno == ENOMEM){
+    if(errno == ENOMEM) {
         fprintf(stderr, "No hay memoria suficiente para llevar a cabo el programa.\n");
         closeFiles(fileCount, files);
         exit(1);
@@ -47,7 +48,7 @@ int main(int argc, char *argv[]) {
     parseStations(stationsAdt, stations, NYC);
     parseEvents(stationsAdt, events, NYC);
 
-    // Resolución de las queries (tanto en HTML como en CSV)
+    // Resolucion de las queries (tanto en HTML como en CSV)
     htmlTable tableQuery1 = query1(stationsAdt, que1);
     htmlTable tableQuery2 = query2(stationsAdt, que2);
     htmlTable tableQuery3 = query3(stationsAdt, que3);
@@ -62,11 +63,10 @@ int main(int argc, char *argv[]) {
 }
 
 void closeFiles (size_t count, FILE * files[]){
-    for (size_t i=0 ; i < count ; i++){
-        if (files[i]!=NULL){
+    for(size_t i=0; i < count; i++) {
+        if(files[i] != NULL) {
             fclose(files[i]);
         }
     }
-    return;
 }
 

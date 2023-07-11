@@ -44,7 +44,7 @@ void * safeMalloc(size_t bytes) {
     if(mem == NULL) {
         fprintf(stderr, "Error de memoria");
         fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
-	errno = ENOMEM;
+	    errno = ENOMEM;
     }
     return mem;
 }
@@ -70,7 +70,7 @@ static void swap(struct stationByName * p1, struct stationByName * p2) {
 static void bubbleSort(struct stationByName ** v, size_t dim) {
     for(size_t i = 0; i < dim - 1; i++) {
         for(size_t j = 0; j < dim - i - 1; j++) {
-             if (v[j]->id > v[j+1]->id) {
+            if(v[j]->id > v[j+1]->id) {
                 swap(&(*v[j]), &(*v[j+1]));
             }
         }
@@ -90,7 +90,6 @@ void fillOrderedIds(stationsADT stationsAdt) {
     stationsAdt->orderedIds = safeMalloc(stationsAdt->dim * sizeof(struct stationByName *));
     traverseListToFillArray(stationsAdt->firstByName, 0, stationsAdt->orderedIds);
     bubbleSort(stationsAdt->orderedIds, stationsAdt->dim);
-    // ahora, el arreglo esta ordenado por ids
 }
 
 static struct stationByName * getStationById(stationsADT stationsAdt, size_t id) {
@@ -148,6 +147,7 @@ static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t in
 void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
     stationByName * statFrom = getStationById(stationsAdt, fromId);
     stationByName * statTo = getStationById(stationsAdt, toId);
+
     char ** nameA = safeMalloc(MAX_LEN);
     char ** nameB = safeMalloc(MAX_LEN);
     size_t flagA, flagB;
@@ -160,10 +160,10 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
         if(isMember) {
             statFrom->quanTripsMember++;
         }
-	statFrom->quanTripsMonth[month - 1]++;
-	flagA = 1;
+	    statFrom->quanTripsMonth[month - 1]++;
+	    flagA = 1;
         indexA = statFrom->alfaId;
-	*nameA = statFrom->name;
+	    *nameA = statFrom->name;
     }
 
     if(statTo != NULL) {
@@ -246,7 +246,7 @@ static stationByTrip * createStationByTripNode(char * name, size_t quanTripsMemb
 
 static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
 	stationByTrip * current = stationsAdt->firstByTrip;
-	if(current == NULL || newNode->quanTripsMember > current->quanTripsMember || (newNode->quanTripsMember == current->quanTripsMember && strcasecmp(newNode->name, current->name)<0)) {
+	if(current == NULL || newNode->quanTripsMember > current->quanTripsMember || (newNode->quanTripsMember == current->quanTripsMember && strcasecmp(newNode->name, current->name) < 0)) {
 		newNode->tailByTrip = current;
 		stationsAdt->firstByTrip = newNode;
 	}
@@ -298,7 +298,7 @@ size_t hasNextName(stationsADT stationsAdt) {
 
 size_t nextName(stationsADT stationsAdt) {
 	size_t c;
-	if ((c = hasNextName(stationsAdt))){
+	if((c = hasNextName(stationsAdt))) {
 		stationsAdt->itName = stationsAdt->itName->tailByName;
 	}
 	return c;
@@ -366,4 +366,3 @@ void freeStations(stationsADT stationsAdt) {
     free(stationsAdt->orderedIds);
     free(stationsAdt);
 }
-

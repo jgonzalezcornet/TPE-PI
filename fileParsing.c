@@ -9,7 +9,7 @@
 
 void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
     const char delim[2] = ";";
-    char str[MAX_CHAR], *name;
+    char str[MAX_CHAR], * name;
     size_t id;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
 
@@ -25,7 +25,7 @@ void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
         }
         addStation(stationsAdt, id, name);
     }
-    fillOrderedIds(stationsAdt);
+    fillOrderedIds(stationsAdt); // crea el arreglo ordenado por id
 }
 
 void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
@@ -47,8 +47,7 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
             if(strcmp(strtok(NULL, delim), "member\n") == 0) { //la linea del archivo termina con un '\n'
                 isMember = 1;
             }
-        }
-	else {
+        } else {
             isMember = atoi(strtok(NULL, delim));
         }
         strtok(aux, "-");
