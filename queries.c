@@ -19,7 +19,7 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
         size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
         addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips(stationsAdt, 0));    // agregamos la fila al HTML
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);                  // imprimimos la fila en el CSV
-    } while(hasNextTrip(stationsAdt));
+    } while(nextTrip(stationsAdt));
 
     closeHTMLTable(table);
     fclose(query1);
@@ -28,7 +28,7 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
 
 htmlTable query2(stationsADT stationsAdt, FILE * query2) {    
     htmlTable table = newTable("query2.html", 4, "StationA", "StationB", "Trips A->B", "Trips B->A");    // imprimimos el encabezado en el HTML
-    fprintf(query2, "StationA;StationB;Trips A->B;Trips B->A");                                          // imprimimos el encabezado en el CSV
+    fprintf(query2, "StationA;StationB;Trips A->B;Trips B->A\n");                                          // imprimimos el encabezado en el CSV
 
     size_t dim = getDim(stationsAdt);        // siendo la matriz de n*n, obtenemos n (cantidad de estaciones)
 
@@ -38,9 +38,11 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2) {
                 size_t AB = getTripsAtoB(stationsAdt, i, j);
                 size_t BA = getTripsAtoB(stationsAdt, j, i);
                 char * nameA = getMatrixName(stationsAdt, i, j);
-                char * nameB = getMatrixName(stationsAdt, j, i);
-                addHTMLRow(table, nameA, nameB, unsignedIntToString(AB), unsignedIntToString(BA));        // agregamos la fila al HTML
-                fprintf(query2, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA);                                 // imprimimos la fila en el CSV
+                if (nameA != NULL){
+                    char * nameB = getMatrixName(stationsAdt, j, i);
+                    addHTMLRow(table, nameA, nameB, unsignedIntToString(AB), unsignedIntToString(BA));        // agregamos la fila al HTML
+                    fprintf(query2, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA);                                 // imprimimos la fila en el CSV
+                }
             }
         }
     }
@@ -51,7 +53,7 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2) {
 
 htmlTable query3(stationsADT stationsAdt, FILE * query3) {
     htmlTable table = newTable("query3.html", 13, "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", "Station");    // imprimimos el encabezado en el HTML
-    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station");                                                                      // imprimimos el encabezado en el CSV
+    fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station\n");                                                                      // imprimimos el encabezado en el CSV
     toBeginName(stationsAdt);
     size_t count;
     do {
