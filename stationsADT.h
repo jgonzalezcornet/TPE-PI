@@ -217,6 +217,31 @@ char* getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB);
 
 size_t getDim(stationsADT stationsAdt);
 
+/*
+    Funcion: safeMalloc
+    Uso: ... = safeMalloc(...);
+    ---------------------------
+    Esta funcion aloca memoria al igual que la 
+    funcion estandar "malloc" de stdlib.h,
+    pero de manera segura, estableciendo 
+    el errno en ENOMEM si no hay
+    memoria suficiente.
+*/
+
+void * safeMalloc(size_t bytes);
+
+/*
+    Funcion: safeCalloc
+    Uso: ... = safeCalloc(...);
+    ---------------------------
+    Esta funcion aloca memoria al igual que la
+    funcion estandar "calloc" de stdlib.h,
+    pero de manera segura, estableciendo 
+    el errno en ENOMEM si no hay
+    memoria suficiente.
+*/
+
+void * safeCalloc(size_t bytes);
 
 
 
