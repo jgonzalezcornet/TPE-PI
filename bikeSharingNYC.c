@@ -22,9 +22,9 @@ int main(int argc, char *argv[]) {
     errno = 0;
     FILE * events = fopen(argv[1], "r");
     FILE * stations = fopen(argv[2], "r");
-    FILE * que1 = fopen(query1.csv, "wt");
-    FILE * que2 = fopen(query2.csv, "wt");
-    FILE * que3 = fopen(query3.csv, "wt");
+    FILE * que1 = fopen("query1.csv", "wt");
+    FILE * que2 = fopen("query2.csv", "wt");
+    FILE * que3 = fopen("query3.csv", "wt");
     FILE * files[] = {events, stations, que1, que2, que3};
     size_t fileCount = QUERIES + argc - 1;
     
