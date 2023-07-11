@@ -83,8 +83,8 @@ static void swap(struct stationByName * p1, struct stationByName * p2) {
 static void bubbleSort(struct stationByName ** v, size_t dim) {
     for(size_t i = 0; i < dim - 1; i++) {
         for(size_t j = 0; j < dim - i - 1; j++) {
-            if(stationComp(&(*v[j]), &(*v[j + 1])) > 0) {
-                swap(&v[j], &v[j + 1]);
+            if(stationComp(&v[j], &v[j + 1]) > 0) {
+                swap(&(*v[j]), &(*v[j + 1]));
             }
         }
     }
