@@ -4,7 +4,7 @@ FLAGS = -pedantic -std=c99 -Wall -fsanitize=address -g
 OUTPUT_FILE_MON = bikeSharingMON
 OUTPUT_FILE_NYC = bikeSharingNYC
 
-QUERIES = query1.csv query2.csv query3.csv
+QUERIES = query1.csv query2.csv query3.csv query1.html query2.html query3.html
 
 DEPENDENCIES = stationsADT.c queries.c fileParsing.c htmlTable.c
 
@@ -26,5 +26,5 @@ cleanNYC:
 	rm -rf $(OUTPUT_FILE_NYC) *.o
 
 cleanQueries:
-	rm -f $(QUERIES)
+	rm -f query1.csv
 
