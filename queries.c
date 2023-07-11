@@ -21,8 +21,6 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);                  // imprimimos la fila en el CSV
     } while(nextTrip(stationsAdt));
 
-    closeHTMLTable(table);
-    fclose(query1);
     return table;
 }
 
@@ -46,8 +44,7 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2) {
             }
         }
     }
-    closeHTMLTable(table);
-    fclose(query2);
+
     return table;
 }
 
@@ -68,8 +65,6 @@ htmlTable query3(stationsADT stationsAdt, FILE * query3) {
         fprintf(query3, "%s\n", name);           // luego de imprimir todos los datos por mes en el CSV, cerramos la linea imprimiendo el nombre\n
     } while(nextName(stationsAdt));
 
-    closeHTMLTable(table);
-    fclose(query3);
     return table;
 }
 

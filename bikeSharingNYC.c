@@ -10,7 +10,8 @@
 #define QUERIES 3
 
 // Función para cerrar todos los archivos
-void closeFiles (size_t count, FILE * files[]);
+void closeFiles(size_t count, FILE * files[]);
+void closeTables(size_t count, htmlTable tables[]);
 
 int main(int argc, char *argv[]) {
 
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]) {
     FILE * que3 = fopen("query3.csv", "wt");
     FILE * files[] = {events, stations, que1, que2, que3};
     size_t fileCount = QUERIES + argc - 1;
+    size_t tableCount = QUERIES;
     
     if(errno == ENOENT){
         closeFiles(fileCount, files); // si alguno de los archivos no se pudo abrir, cierro todos
@@ -53,17 +55,28 @@ int main(int argc, char *argv[]) {
     htmlTable tableQuery2 = query2(stationsAdt, que2);
     htmlTable tableQuery3 = query3(stationsAdt, que3);
 
+    htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3};
+
     // Liberacion de memoria
     freeStations(stationsAdt);
     
     // Cerramos los files que hayan quedado abiertos
     closeFiles(fileCount, files);
+    closeTables(tableCount, tables);
 
     return 0;
 }
 
-void closeFiles (size_t count, FILE * files[]){
-    for(size_t i=0; i < count; i++) {
+void closeTables(size_t count, htmlTable tables[]) {
+    for(size_t i = 0; i < count; i++) {
+        if(tables[i] != NULL) {
+            closeHTMLTable(tables[i]);
+        }
+    }
+}
+
+void closeFiles(size_t count, FILE * files[]) {
+    for(size_t i = 0; i < count; i++) {
         if(files[i] != NULL) {
             fclose(files[i]);
         }
