@@ -62,18 +62,6 @@ void * safeCalloc(size_t quan, size_t bytes) {
 
 /* ---- Funciones para el vector de punteros a estaciones ----- */
 
-static int stationComp(const void * v1, const void * v2) {
-    const stationByName * p1 = (stationByName *) v1;
-    const stationByName * p2 = (stationByName *) v2;
-
-    if(p1->id < p2->id) {
-        return -1;
-    } else if(p1->id > p2->id) {
-        return 1;
-    }
-    return 0;
-}
-
 static void swap(struct stationByName * p1, struct stationByName * p2) {
     stationByName temp = *p2;
     *p2 = *p1;
