@@ -6,8 +6,6 @@
 #include <time.h>
 
 #define MAX_CHAR 250
-#define NYC 0
-#define MON 1
 
 void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
     const char delim[2] = ";";

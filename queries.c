@@ -14,10 +14,11 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
     fprintf(query1, "Station;StartedTrips\n");                                  // imprimimos el encabezado en el CSV
     rearrangeByTrip(stationsAdt);
     toBeginTrip(stationsAdt);
+
     do {
         char * name = getName(stationsAdt, 0);
         size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
-        addHTMLRow(table, name, unsignedIntToString(getTotalMemberTrips(stationsAdt, 0)));    // agregamos la fila al HTML
+        addHTMLRow(table, name, unsignedIntToString(totalMemberTrips));    // agregamos la fila al HTML
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);                  // imprimimos la fila en el CSV
     } while(nextTrip(stationsAdt));
 
@@ -57,11 +58,15 @@ htmlTable query3(stationsADT stationsAdt, FILE * query3) {
     toBeginName(stationsAdt);
     size_t count;
     do {
+        char * countMonth[MONTHS];
+        char * name = getName(stationsAdt, 1);
         for(size_t i=0 ; i<MONTHS ; i++) {
             count = getTripsByMonth(stationsAdt, i);
+            countMonth[i] = unsignedIntToString(count);
             fprintf(query3, "%zu;", count);
         }
-        fprintf(query3, "%s\n", getName(stationsAdt, 1));           // luego de imprimir todos los datos por mes en el CSV, cerramos la linea imprimiendo el nombre\n
+        addHTMLRow(table, countMonth[0], countMonth[1], countMonth[2], countMonth[3], countMonth[4], countMonth[5], countMonth[6], countMonth[7], countMonth[8], countMonth[9], countMonth[10], countMonth[11], name);
+        fprintf(query3, "%s\n", name);           // luego de imprimir todos los datos por mes en el CSV, cerramos la linea imprimiendo el nombre\n
     } while(nextName(stationsAdt));
 
     closeHTMLTable(table);
