@@ -5,7 +5,8 @@
 
 static char * unsignedIntToString(size_t num) {
     char * s = safeMalloc(MAX_DIGITS);
-    snprintf(s, sizeof(s), "%zu", num);
+    int sz = sizeof(s);
+    snprintf(s, sz, "%zu", num);
     return s;
 }
 
