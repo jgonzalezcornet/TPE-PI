@@ -161,6 +161,8 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     size_t flagA, flagB;
     flagA = 0;
     flagB = 0;
+    size_t indexA;
+    size_t indexB;
 
     if(statFrom != NULL) {
         if(isMember) {
@@ -169,14 +171,13 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
         statFrom->quanTripsMonth[month - 1]++;
         *nameA = statFrom->name;
         flagA = 1;
+        indexA = statFrom->alfaId;
     }
 
     if(statTo != NULL) {
         flagB = 1;
+        indexB = statTo->alfaId;
     }
-
-    size_t indexA = statFrom->alfaId;
-    size_t indexB = statTo->alfaId;
 
     if(flagA  && flagB && indexA != indexB) {
         addTripAtoB(stationsAdt->matrix , *nameA, indexA, indexB);
