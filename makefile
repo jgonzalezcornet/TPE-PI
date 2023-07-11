@@ -15,20 +15,20 @@ debug: COMPILER+=$(DEBUG)
 debug: all
 
 MON:
-        $(COMPILER) -o $(OUTPUT_FILE_MON) bikeSharingMON.c $(DEPENDENCIES) $(FLAGS)
+	$(COMPILER) -o $(OUTPUT_FILE_MON) bikeSharingMON.c $(DEPENDENCIES) $(FLAGS)
 
 NYC:
-        $(COMPILER) -o $(OUTPUT_FILE_NYC) bikeSharingNYC.c $(DEPENDENCIES) $(FLAGS)
+	$(COMPILER) -o $(OUTPUT_FILE_NYC) bikeSharingNYC.c $(DEPENDENCIES) $(FLAGS)
 
 clean:
-        rm -rf $(OUTPUT_FILE_MON) $(OUTPUT_FILE_NYC) *.o
+	rm -rf $(OUTPUT_FILE_MON) $(OUTPUT_FILE_NYC) *.o
 
 cleanMON:
-        rm -rf $(OUTPUT_FILE_MON) *.o
+	rm -rf $(OUTPUT_FILE_MON) *.o
 
 cleanNYC:
-        rm -rf $(OUTPUT_FILE_NYC) *.o
+	rm -rf $(OUTPUT_FILE_NYC) *.o
 
 cleanQueries:
-        rm -f $(QUERIES)
+	rm -f $(QUERIES)
 
