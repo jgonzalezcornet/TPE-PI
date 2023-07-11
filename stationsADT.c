@@ -180,20 +180,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     }
     free(nameA);
 }
-/*
-void printMatrix(stationsADT stationsAdt) {
-    for(int i = 0; i < stationsAdt->dim; i++) {
-        for(int j = 0; j < stationsAdt->dim; j++) {
 
-            if(stationsAdt->matrix[i][j].name != NULL && stationsAdt->matrix[j][i].name != NULL){
-                char * auxA = stationsAdt->matrix[i][j].name;
-                char * auxB = stationsAdt->matrix[j][i].name;
-                printf("%s,HASTA %s, %d VECES\n", auxA, auxB, stationsAdt->matrix[i][j].quanTripsAtoB);
-            }
-        }
-    }
-}
-*/
 void newMat(stationsADT stationsAdt) {
     size_t dim = stationsAdt->dim;
     stationMat ** aux = safeMalloc(dim * sizeof(stationMat *));
@@ -206,36 +193,7 @@ void newMat(stationsADT stationsAdt) {
 stationsADT newStations() {
     return safeCalloc(1, sizeof(struct stationsCDT));
 }
-/*
-static void printStationsRec(stationByName * station) {
-    if(station == NULL) {
-        return;
-    }
-    printf("nombre: %s \t\tid: %d\n", station->name, station->id);
-    printStationsRec(station->tailByName);
-}
 
-void printStations(stationsADT stationsAdt) {
-    printStationsRec(stationsAdt->firstByName);
-}
-
-static void printLinksStations(stationByName * station) {
-    if(station == NULL){
-        return;
-    }
-
-    printf("nombre: %s, id: %d viajes por mes: %d\n", station->name, station->id,station->quanTripsMember);
-
-    for(int i = 0; i < MONTHS; i++) {
-        printf("viaje mes %d: %d\n", i + 1, station->quanTripsMonth[i]);
-    }
-    printLinksStations(station->tailByName);
-}
-
-void printLinks(stationsADT stationsAdt) {
-    printLinksStations(stationsAdt->firstByName);
-}
-*/
 /* ----- Funciones para crear la lista ordenada por viajes ----- */
 
 static stationByTrip * createStationByTripNode(char * name, size_t quanTripsMember) {
