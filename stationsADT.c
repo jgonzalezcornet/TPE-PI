@@ -170,6 +170,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     if(statTo != NULL) {
         flagB = 1;
         indexB = statTo->alfaId;
+        *nameB = statTo->name;
     }
 
     if(flagA  && flagB && indexA != indexB) {
