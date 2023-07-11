@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     }
     
     stationsADT stationsAdt = newStations();
-    if (stationsAdt == NULL){
+    if (stationsAdt == NULL || errno = ENOMEN){
         fprintf(stderr, "No hay memoria suficiente para llevar a cabo el programa.\n");
         closeFiles(fileCount, files);
         exit(1);
