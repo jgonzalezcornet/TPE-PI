@@ -113,7 +113,7 @@ static struct stationByName * getStationById(stationsADT stationsAdt, size_t id)
 
 /* ----- Funciones para resolver el procesamiento de datos a un TAD ----- */
 
-static struct stationByName * addStationRec(struct stationByName * first, size_t id, char * name) {
+static struct stationByName * addStationRec(struct stationByName * first, size_t id, char * name, size_t * flag) {
     int c;
     if(first == NULL || (c = strcasecmp(first->name, name)) > 0) {
         stationByName * aux = safeCalloc(1, sizeof(stationByName));
@@ -121,16 +121,18 @@ static struct stationByName * addStationRec(struct stationByName * first, size_t
         aux->name = safeMalloc(strlen(name) + 1);
         strcpy(aux->name, name);
         aux->tailByName = first;
+        *flag = 1;
         return aux;
     } else if(c < 0) {
-        first->tailByName = addStationRec(first->tailByName, id, name);
+        first->tailByName = addStationRec(first->tailByName, id, name, flag);
     }
     return first;
 }
 
 void addStation(stationsADT stationsAdt, size_t id, char * name) {
-    stationsAdt->firstByName = addStationRec(stationsAdt->firstByName, id, name);
-    stationsAdt->dim++;
+    size_t flag = 0;
+    stationsAdt->firstByName = addStationRec(stationsAdt->firstByName, id, name, &flag);
+    stationsAdt->dim += flag;
 }
 
 static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t indexA, size_t indexB) {
