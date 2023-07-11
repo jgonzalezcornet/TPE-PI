@@ -134,10 +134,14 @@ void addStation(stationsADT stationsAdt, size_t id, char * name) {
     stationsAdt->dim++;
 }
 
-static void addTripAtoB(stationMat ** mat, char * nameA, size_t indexA, size_t indexB) {
+static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t indexA, size_t indexB) {
     if(mat[indexA][indexB].name == NULL) {
         mat[indexA][indexB].name = safeMalloc(MAX_LEN);
         strcpy(mat[indexA][indexB].name, nameA);
+    }
+    if(mat[indexB][indexA].name == NULL){
+        mat[indexB][indexA].name = safeMalloc(MAX_LEN);
+        strcpy(mat[indexB][indexA].name, nameA);
     }
     mat[indexA][indexB].quanTripsAtoB++;
 }
@@ -146,6 +150,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     stationByName * statFrom = getStationById(stationsAdt, fromId);
     stationByName * statTo = getStationById(stationsAdt, toId);
     char ** nameA = safeMalloc(MAX_LEN);
+    char ** nameB = safeMalloc(MAX_LEN);
     size_t flagA, flagB;
     flagA = 0;
     flagB = 0;
@@ -168,7 +173,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     }
 
     if(flagA  && flagB && indexA != indexB) {
-        addTripAtoB(stationsAdt->matrix , *nameA, indexA, indexB);
+        addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
     }
     free(nameA);
 }
@@ -358,5 +363,6 @@ void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
     free(stationsAdt->firstByTrip);
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
+    free(stationsAdt->orderedIds);
     free(stationsAdt);
 }
