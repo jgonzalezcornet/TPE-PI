@@ -141,7 +141,7 @@ static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t in
     }
     if(mat[indexB][indexA].name == NULL){
         mat[indexB][indexA].name = safeMalloc(MAX_LEN);
-        strcpy(mat[indexB][indexA].name, nameA);
+        strcpy(mat[indexB][indexA].name, nameB);
     }
     mat[indexA][indexB].quanTripsAtoB++;
 }

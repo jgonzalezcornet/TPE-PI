@@ -3,6 +3,7 @@
 #include "queries.h"
 #include "stationsADT.h"
 #include "fileParsing.h"
+#include <time.h>
 
 #define MON 1
 #define DELIM ";"
@@ -18,6 +19,10 @@ int main(int argc, char *argv[]) {
         fprintf(stdout, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones\n");
         exit(1);
     }
+
+    clock_t start,end;
+    double execution_time;
+    start = clock();
 
     // Abrimos todos los archivos, estableciendo el errno en 0 para poder chequear si hay errores en la apertura
     errno = 0;
@@ -56,6 +61,10 @@ int main(int argc, char *argv[]) {
     
     // Cerramos los files que hayan quedado abiertos
     closeFiles(fileCount, files);
+
+    end = clock();
+    execution_time = ((double)(end - start))/CLOCKS_PER_SEC;
+    printf("El tiempo de ejecucion fue de %f\n",execution_time);
     
     return 0;
 }
