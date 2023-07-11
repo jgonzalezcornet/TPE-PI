@@ -1,6 +1,5 @@
 COMPILER = gcc
-FLAGS = -pedantic -std=c99 -Wall
-DEBUG = -fsanitize=address -g
+FLAGS = -pedantic -std=c99 -Wall -fsanitize=address -g
 
 OUTPUT_FILE_MON = bikeSharingMON
 OUTPUT_FILE_NYC = bikeSharingNYC
@@ -10,9 +9,6 @@ QUERIES = query1.csv query2.csv query3.csv
 DEPENDENCIES = stationsADT.c queries.c fileParsing.c htmlTable.c
 
 all: MON NYC
-
-debug: COMPILER+=$(DEBUG)
-debug: all
 
 MON:
 	$(COMPILER) -o $(OUTPUT_FILE_MON) bikeSharingMON.c $(DEPENDENCIES) $(FLAGS)
