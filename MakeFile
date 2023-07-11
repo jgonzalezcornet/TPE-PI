@@ -14,18 +14,12 @@ all: MON NYC
 debug: COMPILER+=$(DEBUG)
 debug: all
 
-MON: fileMON.o
-	$(COMPILER) -o $(OUTPUT_FILE_MON) $(FLAGS)
+MON:
+	$(COMPILER) -o $(OUTPUT_FILE_MON) bikeSharingMON.c $(DEPENDENCIES) $(FLAGS)
 
-NYC: fileNYC.o
-	$(COMPILER) -o $(OUTPUT_FILE_NYC) $(FLAGS)
+NYC:
+	$(COMPILER) -o $(OUTPUT_FILE_NYC) bikeSharingNYC.c $(DEPENDENCIES) $(FLAGS)
 
-fileMON.o: bikeSharingMON.c
-	$(COMPILER) -c bikeSharingMON.c $(DEPENDENCIES) $(FLAGS) 
-
-fileNYC.o: bikeSharingNYC.c
-	$(COMPILER) -c bikeSharingNYC.c $(DEPENDENCIES) $(FLAGS) 
-	
 clean:
 	rm -rf $(OUTPUT_FILE_MON) $(OUTPUT_FILE_NYC) *.o
 
