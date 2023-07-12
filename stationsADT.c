@@ -179,6 +179,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
         addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
     }
     free(nameA);
+    free(nameB);
 }
 
 void newMat(stationsADT stationsAdt) {
