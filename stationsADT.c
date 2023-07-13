@@ -334,5 +334,8 @@ void freeStations(stationsADT stationsAdt) {
     freeStationsRecByTrip(stationsAdt->firstByTrip); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt->orderedIds);
+    for(size_t i = 0; i < stationsAdt->dim; i++) {
+        if(stationsAdt->orderedIds[i] != NULL) free(stationsAdt->orderedIds[i]);
+    }
     free(stationsAdt);
 }
