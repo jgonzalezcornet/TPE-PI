@@ -38,15 +38,6 @@ stationsADT newStations();
 void newMat(stationsADT stationsAdt);
 
 /*
-    Funcion: freeStations
-    Uso: freeStations(stations);
-    ----------------------------
-    Esta funcion libera los espacios de memoria asociados con "stations".
-*/
-
-void freeStations(stationsADT);
-
-/*
     Funcion: addStations
     Uso: addStations(stations, file, identifier);
     ---------------------------------------------

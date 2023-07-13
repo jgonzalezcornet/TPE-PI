@@ -178,8 +178,8 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     if(flagA && flagB && indexA != indexB) {
         addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
     }
-    free(nameA);
-    free(nameB); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+    free(*nameA);
+    free(*nameB); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
 }
 
 void newMat(stationsADT stationsAdt) {
@@ -334,6 +334,5 @@ void freeStations(stationsADT stationsAdt) {
     freeStationsRecByTrip(stationsAdt->firstByTrip); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt->orderedIds);
-    
     free(stationsAdt);
 }
