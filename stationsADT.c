@@ -179,7 +179,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
         addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
     }
     free(nameA);
-    free(nameB);
+    free(nameB); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
 }
 
 void newMat(stationsADT stationsAdt) {
@@ -308,6 +308,15 @@ static void freeStationsRec(stationByName * station) {
     free(station);
 }
 
+static void freeStationsRecByTrip(stationByTrip *station){ //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+    if(station == NULL) {
+        return;
+    }
+    freeStationsRecByTrip(station->tailByTrip);
+    free(station->name);
+    free(station);
+}
+
 static void freeMatrix(stationMat ** matrix, size_t dim) {
     for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++){
@@ -322,7 +331,7 @@ static void freeMatrix(stationMat ** matrix, size_t dim) {
 
 void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
-    free(stationsAdt->firstByTrip);
+    freeStationsRecByTrip(stationsAdt->firstByTrip); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt->orderedIds);
     free(stationsAdt);
