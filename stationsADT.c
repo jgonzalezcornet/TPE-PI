@@ -336,15 +336,3 @@ void freeStations(stationsADT stationsAdt) {
     free(stationsAdt->orderedIds);
     free(stationsAdt);
 }
-
-static void printListRec(struct stationByName *station){
-    if(station == NULL){
-        return;
-    }
-    printf("%s\n",station->name);
-    printListRec(station->tailByName);
-}
-
-void printList(stationsADT stationsAdt){
-    printListRec(stationsAdt->firstByName);
-}

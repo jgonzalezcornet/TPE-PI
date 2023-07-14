@@ -255,7 +255,5 @@ void * safeCalloc(size_t quan, size_t bytes);
 
 void fillOrderedIds(stationsADT stationsAdt);
 
-void printList(stationsADT stationsAdt);
-
 #endif
 
