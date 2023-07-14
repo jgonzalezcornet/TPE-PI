@@ -14,16 +14,16 @@ void closeFiles(size_t count, FILE * files[]);
 void closeTables(size_t count, htmlTable tables[]);
 
 int main(int argc, char *argv[]) {
-    /*if(argc != 3) {
+    if(argc != 3) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
         fprintf(stdout, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones\n");
         exit(1);
-    }*/
+    }
 
     // Abrimos todos los archivos, estableciendo el errno en 0 para poder chequear si hay errores en la apertura
     errno = 0;
-    FILE * events = fopen("bikesMON.csv", "r");
-    FILE * stations = fopen("stationsMON.csv", "r");
+    FILE * events = fopen(argv[1], "r");
+    FILE * stations = fopen(argv[2], "r");
     FILE * que1 = fopen("query1.csv", "wt");
     FILE * que2 = fopen("query2.csv", "wt");
     FILE * que3 = fopen("query3.csv", "wt");
@@ -55,6 +55,7 @@ int main(int argc, char *argv[]) {
     htmlTable tableQuery3 = query3(stationsAdt, que3);
 
     htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3};
+
 
     // Liberacion de memoria
     freeStations(stationsAdt);

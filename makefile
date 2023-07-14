@@ -1,5 +1,5 @@
 COMPILER = gcc
-FLAGS = -pedantic -std=c99 -Wall -fsanitize=address -g
+FLAGS = -pedantic -std=c99 -Wall # -fsanitize=address -g
 
 OUTPUT_FILE_MON = bikeSharingMON
 OUTPUT_FILE_NYC = bikeSharingNYC
@@ -27,4 +27,7 @@ cleanNYC:
 
 cleanQueries:
 	rm -f $(QUERIES)
+
+test:
+	valgrind --tool=memcheck --leak-check=full --track-origins=yes --verbose --log-file=valgrind_analysis.txt ./bikeSharingMON csvFiles/bikesMON.csv csvFiles/stationsMON.csv
 
