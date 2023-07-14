@@ -331,7 +331,7 @@ static void freeMatrix(stationMat ** matrix, size_t dim) {
 
 void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
-    freeStationsRecByTrip(stationsAdt->firstByTrip); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+    freeStationsRecByTrip(stationsAdt->firstByTrip);
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt->orderedIds);
     free(stationsAdt);
