@@ -29,7 +29,8 @@ int main(int argc, char *argv[]) {
     FILE * que1 = fopen("query1.csv", "wt");
     FILE * que2 = fopen("query2.csv", "wt");
     FILE * que3 = fopen("query3.csv", "wt");
-    FILE * files[] = {events, stations, que1, que2, que3};
+    FILE * que4 = fopen("query4.csv", "wt");
+    FILE * files[] = {events, stations, que1, que2, que3, que4};
     size_t fileCount = QUERIES + argc - 1;
     size_t tableCount = QUERIES;
     
@@ -55,8 +56,9 @@ int main(int argc, char *argv[]) {
     htmlTable tableQuery1 = query1(stationsAdt, que1);
     htmlTable tableQuery2 = query2(stationsAdt, que2);
     htmlTable tableQuery3 = query3(stationsAdt, que3);
+    htmlTable tableQuery4 = query4(stationsAdt, que4);
 
-    htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3};
+    htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3, tableQuery4};
 
     // Liberacion de memoria
     freeStations(stationsAdt);
