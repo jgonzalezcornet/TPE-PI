@@ -15,9 +15,9 @@ void closeTables(size_t count, htmlTable tables[]);
 
 int main(int argc, char *argv[]) {
 
-    if(argc != 3) {
+    if(argc > 5 || argc < 3) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
-        fprintf(stdin, "Uso: ./bikeSharingNYC archivo_data_alquileres archivo_data_estaciones\n");
+        fprintf(stdin, "Uso: ./bikeSharingNYC archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
         exit(1);
     }
 
@@ -25,6 +25,8 @@ int main(int argc, char *argv[]) {
     errno = 0;
     FILE * events = fopen(argv[1], "r");
     FILE * stations = fopen(argv[2], "r");
+    size_t firstYear = (argc > 3 ? argv[3] : 0);
+    size_t lastYear = (argc > 4 ? argv[4] : MAX_YEAR - 1);
     FILE * que1 = fopen("query1.csv", "wt");
     FILE * que2 = fopen("query2.csv", "wt");
     FILE * que3 = fopen("query3.csv", "wt");

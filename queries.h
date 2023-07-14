@@ -21,7 +21,7 @@
     por usuarios miembros. 
 */
 
-htmlTable query1(stationsADT stationsAdt, FILE *query1);
+htmlTable query1(stationsADT stationsAdt, FILE * query1);
 
 /*
     Funcion: query2
@@ -34,7 +34,7 @@ htmlTable query1(stationsADT stationsAdt, FILE *query1);
     el nombre de A y desempatando por el de B.
 */
 
-htmlTable query2(stationsADT stationsAdt, FILE *query2);
+htmlTable query2(stationsADT stationsAdt, FILE * query2);
 
 /*
     Funcion: query3
@@ -46,7 +46,13 @@ htmlTable query2(stationsADT stationsAdt, FILE *query2);
     en orden alfabetico por nombre de la estacion.
 */
 
-htmlTable query3(stationsADT stationsAdt, FILE *query3);
+htmlTable query3(stationsADT stationsAdt, FILE * query3);
+
+/* 
+
+*/
+
+htmlTable query4(stationsADT stationsAdt, FILE * query4);
 
 #endif
 

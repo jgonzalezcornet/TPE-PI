@@ -14,14 +14,21 @@ typedef struct stationByName {
     char * name;
     size_t quanTripsMonth[MONTHS];
     size_t quanTripsMember;
+    size_t quanRoundTrips;
     struct stationByName * tailByName;
 } stationByName;
 
-typedef struct stationByTrip{
+typedef struct stationByTrip {
     char * name;
     size_t quanTripsMember;
     struct stationByTrip * tailByTrip;
 } stationByTrip;
+
+typedef struct stationByRoundTrip {
+    char * name;
+    size_t quanRoundTrips;
+    struct stationByRoundTrip * tailByRoundTrip;
+} stationByRoundTrip;
 
 typedef struct stationMat{
     char * name;
@@ -31,6 +38,7 @@ typedef struct stationMat{
 struct stationsCDT {
     struct stationByTrip * firstByTrip;
     struct stationByName * firstByName;
+    struct stationByRoundTrip * firstByRoundTrip;
     struct stationByTrip * itTrip;
     struct stationByName * itName;
     stationMat ** matrix;
@@ -175,8 +183,12 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
         *nameB = statTo->name;
     }
 
-    if(flagA && flagB && indexA != indexB) {
-        addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
+    if(flagA && flagB) {
+        if(indexA == indexB) {
+            statFrom->quanRoundTrips++;
+        } else {
+            addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
+        }
     }
     free(nameA);
     free(nameB); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
@@ -229,6 +241,42 @@ void rearrangeByTrip(stationsADT stationsAdt) {
 		current = current->tailByName;
 	}
 }
+
+/* ----- Funciones para crear la lista ordenada por viajes circulares ----- */
+
+static stationByRoundTrip * createStationByRoundTripNode(char * name, size_t quanRoundTrips) {
+	stationByRoundTrip * newNode = safeMalloc(sizeof(stationByRoundTrip));
+	newNode->name = safeMalloc(strlen(name) + 1);
+	strcpy(newNode->name, name);
+	newNode->quanRoundTrips = quanRoundTrips;
+	newNode->tailByRoundTrip = NULL;
+	return newNode;
+}
+
+static void insertByRoundTrip(stationsADT stationsAdt, stationByRoundTrip * newNode) {
+	stationByRoundTrip * current = stationsAdt->firstByRoundTrip;
+	if(current == NULL || newNode->quanRoundTrips > current->quanRoundTrips || (newNode->quanRoundTrips == current->quanRoundTrips && strcasecmp(newNode->name, current->name) < 0)) {
+		newNode->tailByRoundTrip = current;
+		stationsAdt->firstByTrip = newNode;
+	}
+	else {
+		while(current->tailByRoundTrip != NULL && (current->tailByRoundTrip->quanRoundTrips > newNode->quanRoundTrips || (current->tailByRoundTrip->quanRoundTrips == newNode->quanRoundTrips && strcasecmp(current->tailByRoundTrip->name, newNode->name) < 0))) {
+			current = current->tailByRoundTrip;
+		}
+		newNode->tailByRoundTrip = current->tailByRoundTrip;
+		current->tailByRoundTrip = newNode;
+	}
+}
+
+void rearrangeByRoundTrip(stationsADT stationsAdt) {
+	stationByName * current = stationsAdt->firstByName;
+	while(current != NULL) {
+		stationByRoundTrip * newNode = createStationByRoundTripNode(current->name, current->quanRoundTrips);
+		insertByTrip(stationsAdt, newNode);
+		current = current->tailByName;
+	}
+}
+
 /* ----- Funciones de iteración por viajes ----- */
 
 void toBeginTrip(stationsADT stationsAdt) {
@@ -308,11 +356,20 @@ static void freeStationsRec(stationByName * station) {
     free(station);
 }
 
-static void freeStationsRecByTrip(stationByTrip *station){ //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+static void freeStationsRecByTrip(stationByTrip * station){ //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
     if(station == NULL) {
         return;
     }
     freeStationsRecByTrip(station->tailByTrip);
+    free(station->name);
+    free(station);
+}
+
+static void freeStationsRecByRoundTrip(stationByRoundTrip * station){ //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+    if(station == NULL) {
+        return;
+    }
+    freeStationsRecByRoundTrip(station->tailByRoundTrip);
     free(station->name);
     free(station);
 }
@@ -332,6 +389,7 @@ static void freeMatrix(stationMat ** matrix, size_t dim) {
 void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
     freeStationsRecByTrip(stationsAdt->firstByTrip); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+    freeStationsRecByRoundTrip(stationsAdt->firstByRoundTrip);
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt->orderedIds);
     free(stationsAdt);

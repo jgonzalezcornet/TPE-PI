@@ -12,6 +12,7 @@
 #define NYC 0
 #define MON 1
 #define MONTHS 12
+#define MAX_YEAR 4000
 
 typedef struct stationsCDT *stationsADT;
 
@@ -79,6 +80,12 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
 */
 
 void rearrangeByTrip(stationsADT stationsAdt);
+
+/*
+
+*/
+
+void rearrangeByRoundTrip(stationsADT stationsAdt);
 
 /*
     Funcion: toBeginTrip

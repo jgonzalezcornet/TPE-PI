@@ -54,5 +54,6 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
         processEvent(stationsAdt, month, fromId, toId, isMember);
     }
     rearrangeByTrip(stationsAdt); // crea la lista ordenada por trips
+    rearrangeByRoundTrip(stationsAdt); // crea la lista ordeanada por trips circulares
 }
 

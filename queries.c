@@ -79,3 +79,14 @@ htmlTable query3(stationsADT stationsAdt, FILE * query3) {
     return table;
 }
 
+htmlTable query4(stationsADT stationsAdt, FILE * query4) {
+    htmlTable table = newTable("query4.html", 2, "Station", "RoundingTrips");
+    fprintf(query1, "Station;RoundingTrips\n");
+    toBeginRoundTrip(stationsAdt);
+
+    do {
+        char * name = getName(stationsAdt, 0);
+        size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
+    } while(nextRoundTrip(stationsAdt));
+}
+
