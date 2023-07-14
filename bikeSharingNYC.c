@@ -7,17 +7,16 @@
 #define NYC 0
 #define DELIM ";"
 #define MONTHS 12
-#define QUERIES 3
+#define QUERIES 4
 
 // Función para cerrar todos los archivos
 void closeFiles(size_t count, FILE * files[]);
 void closeTables(size_t count, htmlTable tables[]);
 
 int main(int argc, char *argv[]) {
-
-    if(argc > 5 || argc < 3) {
+    if(argc > 5 || argc < 3 || (argc == 5 && atoi(argv[3]) > atoi(argv[4]))) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
-        fprintf(stdin, "Uso: ./bikeSharingNYC archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
+        fprintf(stdout, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
         exit(1);
     }
 
@@ -25,13 +24,14 @@ int main(int argc, char *argv[]) {
     errno = 0;
     FILE * events = fopen(argv[1], "r");
     FILE * stations = fopen(argv[2], "r");
-    size_t firstYear = (argc > 3 ? argv[3] : 0);
-    size_t lastYear = (argc > 4 ? argv[4] : MAX_YEAR - 1);
+    size_t firstYear = (argc > 3 ? atoi(argv[3]) : 0);
+    size_t lastYear = (argc > 4 ? atoi(argv[4]) : MAX_YEAR - 1);
     FILE * que1 = fopen("query1.csv", "wt");
     FILE * que2 = fopen("query2.csv", "wt");
     FILE * que3 = fopen("query3.csv", "wt");
-    FILE * files[] = {events, stations, que1, que2, que3};
-    size_t fileCount = QUERIES + argc - 1;
+    FILE * que4 = fopen("query4.csv", "wt");
+    FILE * files[] = {events, stations, que1, que2, que3, que4};
+    size_t fileCount = QUERIES + 3 - 1;
     size_t tableCount = QUERIES;
     
     if(errno == ENOENT){
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     
-    stationsADT stationsAdt = newStations();
+    stationsADT stationsAdt = newStations(firstYear, lastYear);
 
     if(errno == ENOMEM) {
         fprintf(stderr, "No hay memoria suficiente para llevar a cabo el programa.\n");
@@ -56,8 +56,9 @@ int main(int argc, char *argv[]) {
     htmlTable tableQuery1 = query1(stationsAdt, que1);
     htmlTable tableQuery2 = query2(stationsAdt, que2);
     htmlTable tableQuery3 = query3(stationsAdt, que3);
+    htmlTable tableQuery4 = query4(stationsAdt, que4);
 
-    htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3};
+    htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3, tableQuery4};
 
     // Liberacion de memoria
     freeStations(stationsAdt);

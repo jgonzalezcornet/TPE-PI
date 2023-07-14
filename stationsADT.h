@@ -69,7 +69,7 @@ void freeStations(stationsADT stationsAdt);
     los campos correspondientes en el TAD y en la matriz.
 */
 
-void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember, size_t year);
+void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember);
 
 /*
     Funcion: rearrangeByTrip
@@ -79,7 +79,8 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     por quanTripsMember.
 */
 
-void rearrangeByTrip(stationsADT stationsAdt);
+//flag == 0 -> firstByTrip    flag == 1 -> firstByRoundTrip
+void rearrangeByTrip(stationsADT stationsAdt, size_t flag);
 
 /*
 
@@ -252,6 +253,12 @@ void * safeCalloc(size_t quan, size_t bytes);
 */
 
 void fillOrderedIds(stationsADT stationsAdt);
+
+void toBeginRoundTrip(stationsADT stationsAdt);
+
+size_t hasNextRoundTrip(stationsADT stationsAdt);
+
+size_t nextRoundTrip(stationsADT stationsAdt);
 
 void printList(stationsADT stationsAdt);
 

@@ -18,7 +18,7 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1) {
 
     do {
         char * name = getName(stationsAdt, 0);
-        size_t totalMemberTrips = getTotalMemberTrips(stationsAdt, 0);
+        size_t totalMemberTrips = getTotalTrips(stationsAdt, 0);
         char *totalMemberTripsStr = unsignedIntToString(totalMemberTrips);
         addHTMLRow(table, name, totalMemberTripsStr);    // agregamos la fila al HTML
         fprintf(query1, "%s;%zu\n", name, totalMemberTrips);                  // imprimimos la fila en el CSV
@@ -81,7 +81,7 @@ htmlTable query3(stationsADT stationsAdt, FILE * query3) {
 
 htmlTable query4(stationsADT stationsAdt, FILE * query4) {
     htmlTable table = newTable("query4.html", 2, "Station", "RoundingTrips");
-    fprintf(query1, "Station;RoundingTrips\n");
+    fprintf(query4, "Station;RoundingTrips\n");
     toBeginRoundTrip(stationsAdt);
 
     do {
@@ -89,9 +89,11 @@ htmlTable query4(stationsADT stationsAdt, FILE * query4) {
         size_t totalRoundTrips = getTotalTrips(stationsAdt, 2);
         char *totalRoundTripsStr = unsignedIntToString(totalRoundTrips);
         addHTMLRow(table, name, totalRoundTripsStr);    // agregamos la fila al HTML
-        fprintf(query1, "%s;%zu\n", name, totalRoundTrips);  // imprimimos la fila en el CSV
+        fprintf(query4, "%s;%zu\n", name, totalRoundTrips);  // imprimimos la fila en el CSV
         free(totalRoundTripsStr);
 
     } while(nextRoundTrip(stationsAdt));
+
+    return table;
 }
 

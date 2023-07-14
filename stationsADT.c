@@ -152,7 +152,7 @@ static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t in
     mat[indexA][indexB].quanTripsAtoB++;
 }
 
-void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember, size_t year) {
+void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember) {
     stationByName * statFrom = getStationById(stationsAdt, fromId);
     stationByName * statTo = getStationById(stationsAdt, toId);
 
@@ -183,12 +183,14 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     if(flagA && flagB) {
         if(stationsAdt->firstYear <= year && year <= stationsAdt->lastYear && indexA == indexB) {
             statFrom->quanRoundTrips++;
-        } else {
+        }
+        if(indexA != indexB){
             addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
         }
+        
     }
     free(nameA);
-    free(nameB); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+    free(nameB);
 }
 
 void newMat(stationsADT stationsAdt) {
@@ -200,47 +202,72 @@ void newMat(stationsADT stationsAdt) {
     stationsAdt->matrix = aux;
 }
 
-stationsADT newStations() {
-    return safeCalloc(1, sizeof(struct stationsCDT));
+stationsADT newStations(size_t firstYear, size_t lastYear) {
+    stationsADT aux = safeCalloc(1, sizeof(struct stationsCDT));
+    aux->firstYear = firstYear;
+    aux->lastYear = lastYear;
+    return aux;
 }
 
 /* ----- Funciones para crear la lista ordenada por viajes ----- */
 
-static stationByTrip * createStationByTripNode(char * name, size_t quanTripsMember) {
+static stationByTrip * createStationByTripNode(char * name, size_t quanTrips) {
 	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip));
 	newNode->name = safeMalloc(strlen(name) + 1);
 	strcpy(newNode->name, name);
-	newNode->quanTrips = quanTripsMember;
+	newNode->quanTrips = quanTrips;
 	newNode->tailByTrip = NULL;
 	return newNode;
 }
 
-static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
-	stationByTrip * current = stationsAdt->firstByTrip;
+//flag == 0 -> firstByTrip    flag == 1 -> firstByRoundTrip
+static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode, size_t flag) {
+    /*if(flag == 0){
+        stationByTrip * current = stationsAdt->firstByTrip;
+    }
+    else{
+        stationByTrip * current = stationsAdt->firstByRoundTrip;
+    }*/
+    stationByTrip * current = (flag == 0 ? stationsAdt->firstByTrip : stationsAdt->firstByRoundTrip );
 	if(current == NULL || newNode->quanTrips > current->quanTrips || (newNode->quanTrips == current->quanTrips && strcasecmp(newNode->name, current->name) < 0)) {
 		newNode->tailByTrip = current;
-		stationsAdt->firstByTrip = newNode;
+        if(flag == 0){
+            stationsAdt->firstByTrip = newNode;
+        }
+        else{
+            stationsAdt->firstByRoundTrip = newNode;
+        }
 	}
 	else {
-		while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
-			current = current->tailByTrip;
+        while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
+		    current = current->tailByTrip;
 		}
 		newNode->tailByTrip = current->tailByTrip;
 		current->tailByTrip = newNode;
 	}
+    if(flag == 1){
+        printf("%s, %zu\n",newNode->name, newNode->quanTrips); //para testear
+    }
 }
 
-void rearrangeByTrip(stationsADT stationsAdt) {
+//flag == 0 -> firstByTrip    flag == 1 -> firstByRoundTrip
+void rearrangeByTrip(stationsADT stationsAdt, size_t flag) {
 	stationByName * current = stationsAdt->firstByName;
 	while(current != NULL) {
-		stationByTrip * newNode = createStationByTripNode(current->name, current->quanTripsMember);
-		insertByTrip(stationsAdt, newNode);
+        /*if(flag == 0){
+            stationByTrip * newNode = createStationByTripNode(current->name, current->quanTripsMember);
+        }
+        else{
+            stationByTrip * newNode = createStationByTripNode(current->name, current->quanRoundTrips);
+        }*/
+        stationByTrip * newNode = createStationByTripNode(current->name, (flag == 0 ? current->quanTripsMember : current->quanRoundTrips));
+		insertByTrip(stationsAdt, newNode, flag); //el if else me daba error, entonces lo arregle asi.
 		current = current->tailByName;
 	}
 }
 
 /* ----- Funciones para crear la lista ordenada por viajes circulares ----- */
-
+/*
 static stationByTrip * createStationByRoundTripNode(char * name, size_t quanRoundTrips) {
 	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip));
 	newNode->name = safeMalloc(strlen(name) + 1);
@@ -272,7 +299,7 @@ void rearrangeByRoundTrip(stationsADT stationsAdt) {
 		insertByTrip(stationsAdt, newNode);
 		current = current->tailByName;
 	}
-}
+}*/
 
 /* ----- Funciones de iteración por viajes ----- */
 
