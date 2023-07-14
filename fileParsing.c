@@ -51,7 +51,7 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
         }
         strtok(aux, "-");
         month = atoi(strtok(NULL, "-"));
-        processEvent(stationsAdt, month, fromId, toId, isMember);
+        processEvent(stationsAdt, month, fromId, toId, isMember, year);
     }
     rearrangeByTrip(stationsAdt); // crea la lista ordenada por trips
     rearrangeByRoundTrip(stationsAdt); // crea la lista ordeanada por trips circulares

@@ -20,15 +20,9 @@ typedef struct stationByName {
 
 typedef struct stationByTrip {
     char * name;
-    size_t quanTripsMember;
+    size_t quanTrips;
     struct stationByTrip * tailByTrip;
 } stationByTrip;
-
-typedef struct stationByRoundTrip {
-    char * name;
-    size_t quanRoundTrips;
-    struct stationByRoundTrip * tailByRoundTrip;
-} stationByRoundTrip;
 
 typedef struct stationMat{
     char * name;
@@ -36,11 +30,14 @@ typedef struct stationMat{
 } stationMat;
 
 struct stationsCDT {
+    size_t firstYear;
+    size_t lastYear;
     struct stationByTrip * firstByTrip;
     struct stationByName * firstByName;
-    struct stationByRoundTrip * firstByRoundTrip;
+    struct stationByTrip * firstByRoundTrip;
     struct stationByTrip * itTrip;
     struct stationByName * itName;
+    struct stationByTrip * itRoundTrip;
     stationMat ** matrix;
     struct stationByName ** orderedIds;
     size_t dim;
@@ -155,7 +152,7 @@ static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t in
     mat[indexA][indexB].quanTripsAtoB++;
 }
 
-void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember) {
+void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember, size_t year) {
     stationByName * statFrom = getStationById(stationsAdt, fromId);
     stationByName * statTo = getStationById(stationsAdt, toId);
 
@@ -184,7 +181,7 @@ void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t t
     }
 
     if(flagA && flagB) {
-        if(indexA == indexB) {
+        if(stationsAdt->firstYear <= year && year <= stationsAdt->lastYear && indexA == indexB) {
             statFrom->quanRoundTrips++;
         } else {
             addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
@@ -213,19 +210,19 @@ static stationByTrip * createStationByTripNode(char * name, size_t quanTripsMemb
 	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip));
 	newNode->name = safeMalloc(strlen(name) + 1);
 	strcpy(newNode->name, name);
-	newNode->quanTripsMember = quanTripsMember;
+	newNode->quanTrips = quanTripsMember;
 	newNode->tailByTrip = NULL;
 	return newNode;
 }
 
 static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode) {
 	stationByTrip * current = stationsAdt->firstByTrip;
-	if(current == NULL || newNode->quanTripsMember > current->quanTripsMember || (newNode->quanTripsMember == current->quanTripsMember && strcasecmp(newNode->name, current->name) < 0)) {
+	if(current == NULL || newNode->quanTrips > current->quanTrips || (newNode->quanTrips == current->quanTrips && strcasecmp(newNode->name, current->name) < 0)) {
 		newNode->tailByTrip = current;
 		stationsAdt->firstByTrip = newNode;
 	}
 	else {
-		while(current->tailByTrip != NULL && (current->tailByTrip->quanTripsMember > newNode->quanTripsMember || (current->tailByTrip->quanTripsMember == newNode->quanTripsMember && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
+		while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
 			current = current->tailByTrip;
 		}
 		newNode->tailByTrip = current->tailByTrip;
@@ -244,34 +241,34 @@ void rearrangeByTrip(stationsADT stationsAdt) {
 
 /* ----- Funciones para crear la lista ordenada por viajes circulares ----- */
 
-static stationByRoundTrip * createStationByRoundTripNode(char * name, size_t quanRoundTrips) {
-	stationByRoundTrip * newNode = safeMalloc(sizeof(stationByRoundTrip));
+static stationByTrip * createStationByRoundTripNode(char * name, size_t quanRoundTrips) {
+	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip));
 	newNode->name = safeMalloc(strlen(name) + 1);
 	strcpy(newNode->name, name);
-	newNode->quanRoundTrips = quanRoundTrips;
-	newNode->tailByRoundTrip = NULL;
+	newNode->quanTrips = quanRoundTrips;
+	newNode->tailByTrip = NULL;
 	return newNode;
 }
 
-static void insertByRoundTrip(stationsADT stationsAdt, stationByRoundTrip * newNode) {
-	stationByRoundTrip * current = stationsAdt->firstByRoundTrip;
-	if(current == NULL || newNode->quanRoundTrips > current->quanRoundTrips || (newNode->quanRoundTrips == current->quanRoundTrips && strcasecmp(newNode->name, current->name) < 0)) {
-		newNode->tailByRoundTrip = current;
+static void insertByRoundTrip(stationsADT stationsAdt, stationByTrip * newNode) {
+	stationByTrip * current = stationsAdt->firstByRoundTrip;
+	if(current == NULL || newNode->quanTrips > current->quanTrips || (newNode->quanTrips == current->quanTrips && strcasecmp(newNode->name, current->name) < 0)) {
+		newNode->tailByTrip = current;
 		stationsAdt->firstByTrip = newNode;
 	}
 	else {
-		while(current->tailByRoundTrip != NULL && (current->tailByRoundTrip->quanRoundTrips > newNode->quanRoundTrips || (current->tailByRoundTrip->quanRoundTrips == newNode->quanRoundTrips && strcasecmp(current->tailByRoundTrip->name, newNode->name) < 0))) {
-			current = current->tailByRoundTrip;
+		while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
+			current = current->tailByTrip;
 		}
-		newNode->tailByRoundTrip = current->tailByRoundTrip;
-		current->tailByRoundTrip = newNode;
+		newNode->tailByTrip = current->tailByTrip;
+		current->tailByTrip = newNode;
 	}
 }
 
 void rearrangeByRoundTrip(stationsADT stationsAdt) {
 	stationByName * current = stationsAdt->firstByName;
 	while(current != NULL) {
-		stationByRoundTrip * newNode = createStationByRoundTripNode(current->name, current->quanRoundTrips);
+		stationByTrip * newNode = createStationByRoundTripNode(current->name, current->quanRoundTrips);
 		insertByTrip(stationsAdt, newNode);
 		current = current->tailByName;
 	}
@@ -291,6 +288,24 @@ size_t nextTrip(stationsADT stationsAdt) {
     size_t c;
     if((c = hasNextTrip(stationsAdt))) {
         stationsAdt->itTrip = stationsAdt->itTrip->tailByTrip;
+    }
+    return c;
+}
+
+/* funciones de iteracion por viajes circulares */
+
+void toBeginRoundTrip(stationsADT stationsAdt) {
+    stationsAdt->itRoundTrip = stationsAdt->firstByRoundTrip;
+}
+
+size_t hasNextRoundTrip(stationsADT stationsAdt) {
+    return stationsAdt->itRoundTrip->tailByTrip != NULL;
+}
+
+size_t nextRoundTrip(stationsADT stationsAdt) {
+    size_t c;
+    if((c = hasNextTrip(stationsAdt))) {
+        stationsAdt->itRoundTrip = stationsAdt->itRoundTrip->tailByTrip;
     }
     return c;
 }
@@ -316,17 +331,21 @@ size_t nextName(stationsADT stationsAdt) {
 /* ----- Funciones para obtener datos del Adt desde queries.c ----- */
 
 char * getName(stationsADT stationsAdt, size_t flag) {
-    if(flag) {
-        return stationsAdt->itName->name;
+    if(flag == 0) {
+        return stationsAdt->itTrip->name;
+    } else if(flag == 1) {
+       return stationsAdt->itName->name;
     }
-    return stationsAdt->itTrip->name;
+    return stationsAdt->itRoundTrip->name;
 }
 
-size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag) {
-    if(flag) {
-        return stationsAdt->itName->quanTripsMember;
+size_t getTotalTrips(stationsADT stationsAdt, size_t flag) {
+    if(flag == 0) {
+        return stationsAdt->itTrip->quanTrips;
+    } else if(flag == 1) {
+       return stationsAdt->itName->quanTripsMember;
     }
-    return stationsAdt->itTrip->quanTripsMember;
+    return stationsAdt->itRoundTrip->quanTrips;
 }
 
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
@@ -365,15 +384,6 @@ static void freeStationsRecByTrip(stationByTrip * station){ //!!!!!!!!!!!!!!AGRE
     free(station);
 }
 
-static void freeStationsRecByRoundTrip(stationByRoundTrip * station){ //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
-    if(station == NULL) {
-        return;
-    }
-    freeStationsRecByRoundTrip(station->tailByRoundTrip);
-    free(station->name);
-    free(station);
-}
-
 static void freeMatrix(stationMat ** matrix, size_t dim) {
     for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++){
@@ -388,8 +398,8 @@ static void freeMatrix(stationMat ** matrix, size_t dim) {
 
 void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
-    freeStationsRecByTrip(stationsAdt->firstByTrip); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
-    freeStationsRecByRoundTrip(stationsAdt->firstByRoundTrip);
+    freeStationsRecByTrip(stationsAdt->firstByTrip);
+    freeStationsRecByTrip(stationsAdt->firstByRoundTrip);
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt->orderedIds);
     free(stationsAdt);

@@ -69,7 +69,7 @@ void freeStations(stationsADT stationsAdt);
     los campos correspondientes en el TAD y en la matriz.
 */
 
-void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember);
+void processEvent(stationsADT stationsAdt, size_t month, size_t fromId, size_t toId, char isMember, size_t year);
 
 /*
     Funcion: rearrangeByTrip
@@ -167,10 +167,10 @@ char * getName(stationsADT stationsAdt, size_t flag);
     -------------------------------------------------
     Esta funcion retorna una copia del "quanTripsMember"
     del iterador correspondiente según el valor
-    de la flag: 1 = itName, 0 = itTrip.
+    de la flag: 1 = itName, 0 = itTrip, 2 = itRoundTrip.
 */
 
-size_t getTotalMemberTrips(stationsADT stationsAdt, size_t flag);
+size_t getTotalTrips(stationsADT stationsAdt, size_t flag);
 
 /*
     Funcion: getTripsByMonth
