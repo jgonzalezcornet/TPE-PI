@@ -61,8 +61,6 @@ int main(int argc, char *argv[]) {
 
     htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3, tableQuery4};
 
-    printf("hola\n");
-
     // Liberacion de memoria
     freeStations(stationsAdt);
    
