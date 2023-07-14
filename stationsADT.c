@@ -62,17 +62,17 @@ void * safeCalloc(size_t quan, size_t bytes) {
 
 /* ---- Funciones para el vector de punteros a estaciones ----- */
 
-static void swap(struct stationByName * p1, struct stationByName * p2) {
-    stationByName temp = *p2;
-    *p2 = *p1;
-    *p1 = temp;
+static void swap(struct stationByName **v, size_t i, size_t j){
+    struct stationByName *aux = v[i];
+    v[i] = v[j];
+    v[j] = aux;
 }
 
 static void bubbleSort(struct stationByName ** v, size_t dim) {
     for(size_t i = 0; i < dim - 1; i++) {
         for(size_t j = 0; j < dim - i - 1; j++) {
             if(v[j] != NULL && v[j+1] != NULL && v[j]->id > v[j+1]->id) {
-                swap(&(*v[j]), &(*v[j+1]));
+                swap(v, j, j+1);
             }
         }
     }
@@ -331,8 +331,30 @@ static void freeMatrix(stationMat ** matrix, size_t dim) {
 
 void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
-    freeStationsRecByTrip(stationsAdt->firstByTrip);
+    freeStationsRecByTrip(stationsAdt->firstByTrip); //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
     freeMatrix(stationsAdt->matrix, stationsAdt->dim);
     free(stationsAdt->orderedIds);
     free(stationsAdt);
 }
+
+/* ----- Funciones para testeos ----- */
+
+static void printListRec(stationByName * station){
+    if(station == NULL){
+        return;
+    }
+    printf("%s\tID: %zu\n",station->name,station->id);
+    printListRec(station->tailByName);
+}
+
+void printList(stationsADT stationsAdt){
+    printListRec(stationsAdt->firstByName);
+}
+
+void printOrderedByIds(stationsADT stationsAdt){
+
+    for (size_t i = 0; i < stationsAdt->dim; i++){
+        printf("%s\t id:%zu\n", stationsAdt->orderedIds[i]->name, stationsAdt->orderedIds[i]->id);    
+    }
+}
+
