@@ -91,7 +91,6 @@ htmlTable query4(stationsADT stationsAdt, FILE * query4) {
         addHTMLRow(table, name, totalRoundTripsStr);    // agregamos la fila al HTML
         fprintf(query4, "%s;%zu\n", name, totalRoundTrips);  // imprimimos la fila en el CSV
         free(totalRoundTripsStr);
-
     } while(nextRoundTrip(stationsAdt));
 
     return table;

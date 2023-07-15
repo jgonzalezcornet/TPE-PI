@@ -24,7 +24,7 @@ typedef struct stationByTrip {
     struct stationByTrip * tailByTrip;
 } stationByTrip;
 
-typedef struct stationMat{
+typedef struct stationMat {
     char * name;
     size_t quanTripsAtoB;
 } stationMat;
@@ -67,7 +67,7 @@ void * safeCalloc(size_t quan, size_t bytes) {
 
 /* ---- Funciones para el vector de punteros a estaciones ----- */
 
-static void swap(struct stationByName **v, size_t i, size_t j){
+static void swap(struct stationByName ** v, size_t i, size_t j) {
     struct stationByName *aux = v[i];
     v[i] = v[j];
     v[j] = aux;
@@ -222,24 +222,16 @@ static stationByTrip * createStationByTripNode(char * name, size_t quanTrips) {
 
 //flag == 0 -> firstByTrip    flag == 1 -> firstByRoundTrip
 static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode, size_t flag) {
-    /*if(flag == 0){
-        stationByTrip * current = stationsAdt->firstByTrip;
-    }
-    else{
-        stationByTrip * current = stationsAdt->firstByRoundTrip;
-    }*/
     stationByTrip * current = (flag == 0 ? stationsAdt->firstByTrip : stationsAdt->firstByRoundTrip );
 	if(current == NULL || newNode->quanTrips > current->quanTrips || (newNode->quanTrips == current->quanTrips && strcasecmp(newNode->name, current->name) < 0)) {
 		newNode->tailByTrip = current;
-        if(flag == 0){
+        if(flag == 0) {
             stationsAdt->firstByTrip = newNode;
-        }
-        else{
+        } else {
             stationsAdt->firstByRoundTrip = newNode;
         }
-	}
-	else {
-         while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
+	} else {
+        while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
 		    current = current->tailByTrip;
 		}
 		newNode->tailByTrip = current->tailByTrip;
@@ -251,53 +243,12 @@ static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode, size_
 void rearrangeByTrip(stationsADT stationsAdt, size_t flag) {
 	stationByName * current = stationsAdt->firstByName;
 	while(current != NULL) {
-        /*if(flag == 0){
-            stationByTrip * newNode = createStationByTripNode(current->name, current->quanTripsMember);
-        }
-        else{
-            stationByTrip * newNode = createStationByTripNode(current->name, current->quanRoundTrips);
-        }*/
         stationByTrip * newNode = createStationByTripNode(current->name, (flag == 0 ? current->quanTripsMember : current->quanRoundTrips));
-		insertByTrip(stationsAdt, newNode, flag); //el if else me daba error, entonces lo arregle asi.
+		insertByTrip(stationsAdt, newNode, flag);
 		current = current->tailByName;
 	}
 }
 
-/* ----- Funciones para crear la lista ordenada por viajes circulares ----- */
-/*
-static stationByTrip * createStationByRoundTripNode(char * name, size_t quanRoundTrips) {
-	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip));
-	newNode->name = safeMalloc(strlen(name) + 1);
-	strcpy(newNode->name, name);
-	newNode->quanTrips = quanRoundTrips;
-	newNode->tailByTrip = NULL;
-	return newNode;
-}
-
-static void insertByRoundTrip(stationsADT stationsAdt, stationByTrip * newNode) {
-	stationByTrip * current = stationsAdt->firstByRoundTrip;
-	if(current == NULL || newNode->quanTrips > current->quanTrips || (newNode->quanTrips == current->quanTrips && strcasecmp(newNode->name, current->name) < 0)) {
-		newNode->tailByTrip = current;
-		stationsAdt->firstByTrip = newNode;
-	}
-	else {
-		while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
-			current = current->tailByTrip;
-		}
-		newNode->tailByTrip = current->tailByTrip;
-		current->tailByTrip = newNode;
-	}
-}
-
-void rearrangeByRoundTrip(stationsADT stationsAdt) {
-	stationByName * current = stationsAdt->firstByName;
-	while(current != NULL) {
-		stationByTrip * newNode = createStationByRoundTripNode(current->name, current->quanRoundTrips);
-		insertByTrip(stationsAdt, newNode);
-		current = current->tailByName;
-	}
-}
-*/
 /* ----- Funciones de iteración por viajes ----- */
 
 void toBeginTrip(stationsADT stationsAdt) {
@@ -354,22 +305,26 @@ size_t nextName(stationsADT stationsAdt) {
 
 /* ----- Funciones para obtener datos del Adt desde queries.c ----- */
 
-char * getName(stationsADT stationsAdt, size_t flag) {      // me tira error de que estamos tratando de acceder a name sin chequear que no sea null
-    if(flag == 0 && stationsAdt->itTrip != NULL) {  // agregue lo de despues del && por el error ese
+char * getName(stationsADT stationsAdt, size_t flag) {
+    if(flag == 0 && stationsAdt->itTrip != NULL) {
         return stationsAdt->itTrip->name;
-    } else if(flag == 1 && stationsAdt->itName != NULL) {  // agregue lo de despues del && por el error ese
-       return stationsAdt->itName->name;
-    } else if (stationsAdt->itRoundTrip != NULL)  // agregue la condicion por el error ese
+    } else if(flag == 1 && stationsAdt->itName != NULL) {
+        return stationsAdt->itName->name;
+    } else if(stationsAdt->itRoundTrip != NULL) {
         return stationsAdt->itRoundTrip->name;
+    }
+    return NULL;
 }
 
-size_t getTotalTrips(stationsADT stationsAdt, size_t flag) {    // mismo tema que getName
+size_t getTotalTrips(stationsADT stationsAdt, size_t flag) {
     if(flag == 0 && stationsAdt->itTrip != NULL) {
         return stationsAdt->itTrip->quanTrips;
     } else if(flag == 1 && stationsAdt->itName != NULL) {
-       return stationsAdt->itName->quanTripsMember;
-    } else if (stationsAdt->itRoundTrip != NULL)
+        return stationsAdt->itName->quanTripsMember;
+    } else if(stationsAdt->itRoundTrip != NULL) {
         return stationsAdt->itRoundTrip->quanTrips;
+    }
+    return -1;
 }
 
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
@@ -449,4 +404,3 @@ void printOrderedByIds(stationsADT stationsAdt){
         printf("%s\t id:%zu\n", stationsAdt->orderedIds[i]->name, stationsAdt->orderedIds[i]->id);    
     }
 }
-
