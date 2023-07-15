@@ -87,7 +87,7 @@ htmlTable query4(stationsADT stationsAdt, FILE * query4) {
     do {
         char * name = getName(stationsAdt, 2);
         size_t totalRoundTrips = getTotalTrips(stationsAdt, 2);
-        char *totalRoundTripsStr = unsignedIntToString(totalRoundTrips);
+        char * totalRoundTripsStr = unsignedIntToString(totalRoundTrips);
         addHTMLRow(table, name, totalRoundTripsStr);    // agregamos la fila al HTML
         fprintf(query4, "%s;%zu\n", name, totalRoundTrips);  // imprimimos la fila en el CSV
         free(totalRoundTripsStr);

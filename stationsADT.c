@@ -239,15 +239,12 @@ static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode, size_
         }
 	}
 	else {
-        while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
+         while(current->tailByTrip != NULL && (current->tailByTrip->quanTrips > newNode->quanTrips || (current->tailByTrip->quanTrips == newNode->quanTrips && strcasecmp(current->tailByTrip->name, newNode->name) < 0))) {
 		    current = current->tailByTrip;
 		}
 		newNode->tailByTrip = current->tailByTrip;
 		current->tailByTrip = newNode;
 	}
-    if(flag == 1){
-        printf("%s, %zu\n",newNode->name, newNode->quanTrips); //para testear
-    }
 }
 
 //flag == 0 -> firstByTrip    flag == 1 -> firstByRoundTrip
@@ -299,8 +296,8 @@ void rearrangeByRoundTrip(stationsADT stationsAdt) {
 		insertByTrip(stationsAdt, newNode);
 		current = current->tailByName;
 	}
-}*/
-
+}
+*/
 /* ----- Funciones de iteración por viajes ----- */
 
 void toBeginTrip(stationsADT stationsAdt) {
@@ -331,7 +328,7 @@ size_t hasNextRoundTrip(stationsADT stationsAdt) {
 
 size_t nextRoundTrip(stationsADT stationsAdt) {
     size_t c;
-    if((c = hasNextTrip(stationsAdt))) {
+    if((c = hasNextRoundTrip(stationsAdt))) {
         stationsAdt->itRoundTrip = stationsAdt->itRoundTrip->tailByTrip;
     }
     return c;
@@ -357,22 +354,22 @@ size_t nextName(stationsADT stationsAdt) {
 
 /* ----- Funciones para obtener datos del Adt desde queries.c ----- */
 
-char * getName(stationsADT stationsAdt, size_t flag) {
-    if(flag == 0) {
+char * getName(stationsADT stationsAdt, size_t flag) {      // me tira error de que estamos tratando de acceder a name sin chequear que no sea null
+    if(flag == 0 && stationsAdt->itTrip != NULL) {  // agregue lo de despues del && por el error ese
         return stationsAdt->itTrip->name;
-    } else if(flag == 1) {
+    } else if(flag == 1 && stationsAdt->itName != NULL) {  // agregue lo de despues del && por el error ese
        return stationsAdt->itName->name;
-    }
-    return stationsAdt->itRoundTrip->name;
+    } else if (stationsAdt->itRoundTrip != NULL)  // agregue la condicion por el error ese
+        return stationsAdt->itRoundTrip->name;
 }
 
-size_t getTotalTrips(stationsADT stationsAdt, size_t flag) {
-    if(flag == 0) {
+size_t getTotalTrips(stationsADT stationsAdt, size_t flag) {    // mismo tema que getName
+    if(flag == 0 && stationsAdt->itTrip != NULL) {
         return stationsAdt->itTrip->quanTrips;
-    } else if(flag == 1) {
+    } else if(flag == 1 && stationsAdt->itName != NULL) {
        return stationsAdt->itName->quanTripsMember;
-    }
-    return stationsAdt->itRoundTrip->quanTrips;
+    } else if (stationsAdt->itRoundTrip != NULL)
+        return stationsAdt->itRoundTrip->quanTrips;
 }
 
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
