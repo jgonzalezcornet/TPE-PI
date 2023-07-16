@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    
+
     stationsADT stationsAdt = newStations(firstYear, lastYear);
     
     if(errno == ENOMEM) {

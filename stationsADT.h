@@ -149,7 +149,7 @@ size_t hasNextName(stationsADT stationsAdt);
     exista. Si se pudo mover, retorna 1. Si no, 0.
 */
 
-size_t nextName(stationsADT stationsAdt);
+int nextName(stationsADT stationsAdt);
 
 /*
     Funcion: getName

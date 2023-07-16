@@ -306,14 +306,16 @@ size_t nextTrip(stationsADT stationsAdt) {
     return c;
 }
 
-/* funciones de iteracion por viajes circulares */
+/* ----- Funciones de iteración por viajes circulares ----- */
 
 void toBeginRoundTrip(stationsADT stationsAdt) {
     stationsAdt->itRoundTrip = stationsAdt->firstByRoundTrip;
 }
 
 size_t hasNextRoundTrip(stationsADT stationsAdt) {
-    return stationsAdt->itRoundTrip->tailByTrip != NULL;
+    if (stationsAdt->itRoundTrip != NULL) {     // no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver eso
+        return stationsAdt->itRoundTrip->tailByTrip != NULL;
+    }
 }
 
 size_t nextRoundTrip(stationsADT stationsAdt) {
@@ -327,14 +329,16 @@ size_t nextRoundTrip(stationsADT stationsAdt) {
 /* ----- Funciones de iteración por nombre ----- */
 
 void toBeginName(stationsADT stationsAdt) {
-	stationsAdt->itName = stationsAdt->firstByName;
+    stationsAdt->itName = stationsAdt->firstByName;
 }
 
 size_t hasNextName(stationsADT stationsAdt) {
-	return stationsAdt->itName->tailByName != NULL;
+    if (stationsAdt->itName != NULL) {       // no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver eso
+        return stationsAdt->itName->tailByName != NULL;
+    }
 }
 
-size_t nextName(stationsADT stationsAdt) {
+int nextName(stationsADT stationsAdt) {
 	size_t c;
 	if((c = hasNextName(stationsAdt))) {
 		stationsAdt->itName = stationsAdt->itName->tailByName;
@@ -367,15 +371,21 @@ size_t getTotalTrips(stationsADT stationsAdt, size_t flag) {
 }
 
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
-    return stationsAdt->itName->quanTripsMonth[month];
+    if (month >= 0 && month <= 11) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
+        return stationsAdt->itName->quanTripsMonth[month];
+    }
 }
 
 char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    return stationsAdt->matrix[indexA][indexB].name;
+    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA
+        return stationsAdt->matrix[indexA][indexB].name;
+    }
 }
 
 size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    return stationsAdt->matrix[indexA][indexB].quanTripsAtoB;
+    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA
+        return stationsAdt->matrix[indexA][indexB].quanTripsAtoB;
+    }
 }
 
 size_t getDim(stationsADT stationsAdt) {
@@ -421,7 +431,6 @@ void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int *
 }
 
 /* ----- Funciones para liberar memoria ----- */
-
 
 static void freeMatrixByDay(int ** matrix){
     for (size_t i = 0; i < MONTHS; i++){

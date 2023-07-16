@@ -5,30 +5,29 @@
 #include "stationsADT.h"
 
 #define MAX_CHAR 250
+#define DELIM ";"
 
-void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier) {
-    const char delim[2] = ";";
+void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
     char str[MAX_CHAR], * name;
     size_t id;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
 
     while(fgets(str, MAX_CHAR, file) != NULL) {
         if(identifier == NYC) {
-            name = strtok(str, delim);
-            strtok(NULL, delim);
-            strtok(NULL, delim);
-            id = atoi(strtok(NULL, delim));
+            name = strtok(str, DELIM);
+            strtok(NULL, DELIM);
+            strtok(NULL, DELIM);
+            id = atoi(strtok(NULL, DELIM));
         } else {
-            id = atoi(strtok(str, delim));
-            name = strtok(NULL, delim);
+            id = atoi(strtok(str, DELIM));
+            name = strtok(NULL, DELIM);
         }
         addStation(stationsAdt, id, name);
     }
     fillOrderedIds(stationsAdt); // crea el arreglo ordenado por id
 }
 
-void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
-    const char delim[2] = ";";
+void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier) {
     char str[MAX_CHAR], isMember, *aux;
     size_t fromId, toId, month, year, day;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
@@ -36,18 +35,18 @@ void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier) {
 
     while(fgets(str, MAX_CHAR, file) != NULL) {
         isMember = 0;
-        aux = strtok(str, delim);
-        fromId = atoi(strtok(NULL, delim));
-        strtok(NULL, delim);
-        toId = atoi(strtok(NULL, delim));
+        aux = strtok(str, DELIM);
+        fromId = atoi(strtok(NULL, DELIM));
+        strtok(NULL, DELIM);
+        toId = atoi(strtok(NULL, DELIM));
 
         if(identifier == NYC) {
-            strtok(NULL, delim);
-            if(strcmp(strtok(NULL, delim), "member\n") == 0) { //la linea del archivo termina con un '\n'
+            strtok(NULL, DELIM);
+            if(strcmp(strtok(NULL, DELIM), "member\n") == 0) { //la linea del archivo termina con un '\n'
                 isMember = 1;
             }
         } else {
-            isMember = atoi(strtok(NULL, delim));
+            isMember = atoi(strtok(NULL, DELIM));
         }
         year = atoi(strtok(aux, "-"));
         month = atoi(strtok(NULL, "-"));

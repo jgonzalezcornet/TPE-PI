@@ -16,7 +16,7 @@ void closeTables(size_t count, htmlTable tables[]);
 int main(int argc, char *argv[]) {
     if(argc > 5 || argc < 3 || (argc == 5 && atoi(argv[3]) > atoi(argv[4]))) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
-        fprintf(stdout, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
+        fprintf(stdout, "Uso: ./bikeSharingNYC archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
         exit(1);
     }
 
