@@ -264,4 +264,6 @@ void printList(stationsADT stationsAdt);
 
 void printOrderedByIds(stationsADT stationsAdt);
 
+void printMatPerYear(stationsADT stationAdt);
+
 #endif

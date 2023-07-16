@@ -15,6 +15,7 @@ typedef struct stationByName {
     size_t quanTripsMonth[MONTHS];
     size_t quanTripsMember;
     size_t quanRoundTrips;
+    struct affluxByYear * affluxByYear;
     struct stationByName * tailByName;
 } stationByName;
 
@@ -28,6 +29,12 @@ typedef struct stationMat {
     char * name;
     size_t quanTripsAtoB;
 } stationMat;
+
+typedef struct affluxByYear{
+    size_t year;
+    int ** affluxPerDay;  
+    struct affluxByYear * tailByYear;
+}affluxByYear;
 
 struct stationsCDT {
     size_t firstYear;
@@ -147,17 +154,44 @@ static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t in
     }
     if(mat[indexB][indexA].name == NULL){
         mat[indexB][indexA].name = safeMalloc(MAX_LEN);
-        strcpy(mat[indexB][indexA].name, nameB);
+        strcpy(mat[indexB][indexA].name, nameB); 
     }
     mat[indexA][indexB].quanTripsAtoB++;
+}
+
+static int ** newMatPerYear(size_t * daysPerMonth){
+    int ** aux = safeMalloc(MONTHS * sizeof(int *));
+    for(size_t i = 0; i < MONTHS; i++){
+        aux[i] = safeCalloc(1, daysPerMonth[i] * sizeof(int)); //todos los dias arrancan en 0
+    }
+    return aux;
+}
+
+static struct affluxByYear * addDayRec(struct affluxByYear * first, size_t year, size_t month, size_t day, int state){
+    if(first == NULL || first->year > year){
+        struct affluxByYear * aux = safeMalloc(sizeof(struct affluxByYear));
+        size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        aux->affluxPerDay = newMatPerYear(daysPerMonth);
+        aux->affluxPerDay[month-1][day-1] += state;
+        aux->year = year;
+        aux->tailByYear = first;
+        return aux;
+    }
+    else if(first->year < year){
+        first->tailByYear = addDayRec(first->tailByYear, year, month, day, state);
+    }
+    else{
+        first->affluxPerDay[month-1][day-1] += state;
+    }
+    return first;
 }
 
 void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember) {
     stationByName * statFrom = getStationById(stationsAdt, fromId);
     stationByName * statTo = getStationById(stationsAdt, toId);
 
-    char ** nameA = safeMalloc(MAX_LEN);
-    char ** nameB = safeMalloc(MAX_LEN);
+    char ** nameA = safeMalloc(sizeof(char *));
+    char ** nameB = safeMalloc(sizeof(char *));
     size_t flagA, flagB;
     flagA = 0;
     flagB = 0;
@@ -181,8 +215,12 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
     }
 
     if(flagA && flagB) {
-        if(stationsAdt->firstYear <= year && year <= stationsAdt->lastYear && indexA == indexB) {
-            statFrom->quanRoundTrips++;
+        if(stationsAdt->firstYear <= year && year <= stationsAdt->lastYear) {
+            statFrom->affluxByYear = addDayRec(statFrom->affluxByYear, year, month, day, -1);
+            statTo->affluxByYear = addDayRec(statTo->affluxByYear, year, month, day, 1);
+            if(indexA == indexB){
+                statFrom->quanRoundTrips++;
+            }
         }
         if(indexA != indexB){
             addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
@@ -402,5 +440,24 @@ void printOrderedByIds(stationsADT stationsAdt){
 
     for (size_t i = 0; i < stationsAdt->dim; i++){
         printf("%s\t id:%zu\n", stationsAdt->orderedIds[i]->name, stationsAdt->orderedIds[i]->id);    
+    }
+}
+
+void printMatPerYear(stationsADT stationAdt)
+{
+    size_t count = 0;
+    if(stationAdt->firstByName->affluxByYear == NULL){
+        return;
+    }
+    size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    printf("ANIO %zu:\n",stationAdt->firstByName->affluxByYear->year);
+    for (size_t i = 0; i < MONTHS; i++)
+    {
+        for (size_t j = 0; j < daysPerMonth[i]; j++)
+        {
+            printf("%d ",stationAdt->firstByName->affluxByYear->affluxPerDay[i][j]);
+            count++;
+        }
+        putchar('\n');
     }
 }
