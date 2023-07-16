@@ -7,6 +7,7 @@
 #include <errno.h>
 
 #define MAX_LEN 100
+#define DAYS_IN_YEAR 365
 
 typedef struct stationByName {
     size_t id;
@@ -379,6 +380,45 @@ size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
 
 size_t getDim(stationsADT stationsAdt) {
 	return stationsAdt->dim;
+}
+
+static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, int * negAfflux){
+    size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    for (size_t i = 0; i < MONTHS; i++){
+        for (size_t j = 0; i < daysPerMonth[i]; j++){
+            if(matrix[i][j] > 0){
+                (*posAfflux)++;
+            }
+            else if(matrix[i][j] < 0){
+                (*negAfflux)++;
+            }
+            else{
+                (*neutralAfflux)++;
+            }
+        }  
+    }
+    
+}
+
+void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux){
+    *posAfflux = *neutralAfflux = *negAfflux = 0;
+    size_t iter = firstYear;
+    struct affluxByYear * aux = stationsAdt->itName->affluxByYear;
+    if(aux == NULL){
+        neutralAfflux = DAYS_IN_YEAR * (lastYear - firstYear + 1);
+        return;
+    }
+    for(size_t iterYear = firstYear; iterYear <= lastYear; iterYear++){
+        if(aux == NULL){  //no hay mas años por recorrer
+            *neutralAfflux += DAYS_IN_YEAR * (lastYear - iterYear + 1);
+            return;
+        }
+        else if(aux->year == iterYear){  //el año coincide
+            getAffluxInMat(aux->affluxPerDay, posAfflux, neutralAfflux, negAfflux);
+            aux = aux->tailByYear;
+        }
+        *neutralAfflux += DAYS_IN_YEAR; //el año no coincide
+    }
 }
 
 /* ----- Funciones para liberar memoria ----- */
