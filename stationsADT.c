@@ -383,12 +383,30 @@ size_t getDim(stationsADT stationsAdt) {
 
 /* ----- Funciones para liberar memoria ----- */
 
+
+static void freeMatrixByDay(int ** matrix){
+    for (size_t i = 0; i < MONTHS; i++){
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+static void freeAffluxByYearRec( struct affluxByYear * first){
+    if(first == NULL){
+        return;
+    }
+    freeAffluxByYearRec(first->tailByYear);
+    freeMatrixByDay(first->affluxPerDay);
+    free(first);
+}
+
 static void freeStationsRec(stationByName * station) {
     if(station == NULL) {
         return;
     }
     freeStationsRec(station->tailByName);
     free(station->name);
+    freeAffluxByYearRec(station->affluxByYear);
     free(station);
 }
 
