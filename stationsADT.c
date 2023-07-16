@@ -402,10 +402,9 @@ static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, i
 
 void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux){
     *posAfflux = *neutralAfflux = *negAfflux = 0;
-    size_t iter = firstYear;
     struct affluxByYear * aux = stationsAdt->itName->affluxByYear;
     if(aux == NULL){
-        neutralAfflux = DAYS_IN_YEAR * (lastYear - firstYear + 1);
+        *neutralAfflux = DAYS_IN_YEAR * (lastYear - firstYear + 1);
         return;
     }
     for(size_t iterYear = firstYear; iterYear <= lastYear; iterYear++){
