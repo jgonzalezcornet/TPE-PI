@@ -21,8 +21,8 @@
 		2. path al archivo con los datos sobre las estaciones (ej: stationsMON.csv)
 
 ## ELIMINAR ARCHIVOS
-	- 'make clean'		   para borrar todos los archivos
-	- 'make cleanQueries'	   para borrar los archivos .csv creados por el programa
+	- 'make clean'		   para borrar todos los archivos creados por el programa
+	- 'make cleanQueries'	   para borrar los archivos .csv y .html creados por el programa
 	- 'make cleanMON'	   para borrar el ejecutable MON y sus archivos objeto
 	- 'make cleanNYC' 	   para borrar el ejecutable NYC y sus archivos objeto
 
