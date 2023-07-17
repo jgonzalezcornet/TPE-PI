@@ -190,9 +190,23 @@ static struct affluxByYear * addDayRec(struct affluxByYear * first, size_t year,
     return first;
 }
 
-void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember) {
+void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember, char isRange) {
     stationByName * statFrom = getStationById(stationsAdt, fromId);
     stationByName * statTo = getStationById(stationsAdt, toId);
+
+    static size_t shortestYear = MAX_YEAR;
+    static size_t biggestYear = 0;
+
+    if(!isRange){
+        if(year < shortestYear){
+            shortestYear = year;
+            stationsAdt->firstYear = year;
+        }
+        if(year > biggestYear){
+            biggestYear = year;
+            stationsAdt->lastYear = year;
+        }
+    }
 
     char ** nameA = safeMalloc(sizeof(char *));
     char ** nameB = safeMalloc(sizeof(char *));
@@ -444,6 +458,14 @@ void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int *
             aux = aux->tailByYear;
         }
     }
+}
+
+size_t getFirstYear(stationsADT stationsAdt){
+    return stationsAdt->firstYear;
+}
+
+size_t getLastYear(stationsADT stationsAdt){
+    return stationsAdt->lastYear;
 }
 
 

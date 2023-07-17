@@ -40,6 +40,11 @@ int main(int argc, char *argv[]) {
     size_t fileCount = QUERIES + 3 - 1;
     size_t tableCount = QUERIES;
 
+    char isRange = 1;
+    if(argc <= 3){
+        isRange = 0;
+    }
+
     if(errno == ENOENT) {
         closeFiles(fileCount, files); // si alguno de los archivos no se pudo abrir, cierro todos
         fprintf(stderr, "No se pudo abrir alguno de los archivos.\n");
@@ -56,14 +61,14 @@ int main(int argc, char *argv[]) {
 
     // Carga de datos
     parseStations(stationsAdt, stations, CITY);
-    parseEvents(stationsAdt, events, CITY);
+    parseEvents(stationsAdt, events, CITY, isRange);
 
     // Resolucion de las queries (tanto en HTML como en CSV)
     htmlTable tableQuery1 = query1(stationsAdt, que1);
     htmlTable tableQuery2 = query2(stationsAdt, que2);
     htmlTable tableQuery3 = query3(stationsAdt, que3);
     htmlTable tableQuery4 = query4(stationsAdt, que4);
-    htmlTable tableQuery5 = query5(stationsAdt, que5, firstYear, lastYear);
+    htmlTable tableQuery5 = query5(stationsAdt, que5, getFirstYear(stationsAdt), getLastYear(stationsAdt));
 
     htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3, tableQuery4, tableQuery5};
 

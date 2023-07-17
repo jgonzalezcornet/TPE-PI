@@ -29,7 +29,7 @@ void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
     fillOrderedIds(stationsAdt); // crea el arreglo ordenado por id
 }
 
-void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier) {
+void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char isRange) {
     char str[MAX_CHAR], isMember, *aux;
     size_t fromId, toId, month, year, day;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
@@ -53,7 +53,7 @@ void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier) {
         year = atoi(strtok(aux, "-"));
         month = atoi(strtok(NULL, "-"));
         day = atoi(strtok(NULL, "-"));
-        processEvent(stationsAdt, year, month, day, fromId, toId, isMember);
+        processEvent(stationsAdt, year, month, day, fromId, toId, isMember, isRange);
     }
     rearrangeByTrip(stationsAdt, 0); // crea la lista ordenada por trips
     rearrangeByTrip(stationsAdt, 1); // crea la lista ordenada por trips circulares

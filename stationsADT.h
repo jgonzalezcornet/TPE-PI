@@ -68,7 +68,7 @@ void freeStations(stationsADT stationsAdt);
     los campos correspondientes en el TAD y en la matriz.
 */
 
-void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember);
+void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember, char isRange);
 
 /*
     Funcion: rearrangeByTrip
@@ -258,6 +258,10 @@ void * safeCalloc(size_t quan, size_t bytes);
     al nodo y su id, y luego ordena el arreglo
     ascendentemente por ids.
 */
+
+size_t getFirstYear(stationsADT stationsAdt);
+
+size_t getLastYear(stationsADT stationsAdt);
 
 void fillOrderedIds(stationsADT stationsAdt);
 
