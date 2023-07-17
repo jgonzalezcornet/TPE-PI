@@ -60,4 +60,3 @@ static void addNodes(const char * fatherNode, const char * childNode, htmlTable 
     va_end(arg);
     fprintf(table->file, "</%s>", fatherNode);
 }
-

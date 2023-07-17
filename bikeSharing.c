@@ -4,19 +4,24 @@
 #include "stationsADT.h"
 #include "fileParsing.h"
 
-#define NYC 0
-#define DELIM ";"
-#define MONTHS 12
-#define QUERIES 4
+#define QUERIES 5
 
-// Función para cerrar todos los archivos
+#ifdef MON
+#define CITY 1  // si queremos trabajar sobre MON, utilizamos el identificador CITY = 1
+#else
+#define CITY 0  // si queremos trabajar sobre NYC, utilizamos el identificador CITY = 0
+#endif
+
+// !!!!!!!!! falta arreglar bien esto de chequear los malloc y calloc, lo de errno no es suficiente
+
+// Funciones para cerrar todos los archivos
 void closeFiles(size_t count, FILE * files[]);
 void closeTables(size_t count, htmlTable tables[]);
 
 int main(int argc, char *argv[]) {
     if(argc > 5 || argc < 3 || (argc == 5 && atoi(argv[3]) > atoi(argv[4]))) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
-        fprintf(stdout, "Uso: ./bikeSharingNYC archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
+        fprintf(stdout, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
         exit(1);
     }
 
@@ -30,16 +35,17 @@ int main(int argc, char *argv[]) {
     FILE * que2 = fopen("query2.csv", "wt");
     FILE * que3 = fopen("query3.csv", "wt");
     FILE * que4 = fopen("query4.csv", "wt");
-    FILE * files[] = {events, stations, que1, que2, que3, que4};
+    FILE * que5 = fopen("query5.csv", "wt");
+    FILE * files[] = {events, stations, que1, que2, que3, que4, que5};
     size_t fileCount = QUERIES + 3 - 1;
     size_t tableCount = QUERIES;
-    
-    if(errno == ENOENT){
+
+    if(errno == ENOENT) {
         closeFiles(fileCount, files); // si alguno de los archivos no se pudo abrir, cierro todos
         fprintf(stderr, "No se pudo abrir alguno de los archivos.\n");
         exit(1);
     }
-    
+
     stationsADT stationsAdt = newStations(firstYear, lastYear);
 
     if(errno == ENOMEM) {
@@ -47,23 +53,24 @@ int main(int argc, char *argv[]) {
         closeFiles(fileCount, files);
         exit(1);
     }
-    
+
     // Carga de datos
-    parseStations(stationsAdt, stations, NYC);
-    parseEvents(stationsAdt, events, NYC);
+    parseStations(stationsAdt, stations, CITY);
+    parseEvents(stationsAdt, events, CITY);
 
     // Resolucion de las queries (tanto en HTML como en CSV)
     htmlTable tableQuery1 = query1(stationsAdt, que1);
     htmlTable tableQuery2 = query2(stationsAdt, que2);
     htmlTable tableQuery3 = query3(stationsAdt, que3);
     htmlTable tableQuery4 = query4(stationsAdt, que4);
+    htmlTable tableQuery5 = query5(stationsAdt, que5, firstYear, lastYear);
 
-    htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3, tableQuery4};
+    htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3, tableQuery4, tableQuery5};
 
     // Liberacion de memoria
     freeStations(stationsAdt);
-    
-    // Cerramos los files que hayan quedado abiertos
+
+    // Cerramos los files
     closeFiles(fileCount, files);
     closeTables(tableCount, tables);
 
@@ -85,4 +92,3 @@ void closeFiles(size_t count, FILE * files[]) {
         }
     }
 }
-

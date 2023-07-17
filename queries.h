@@ -48,11 +48,30 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2);
 
 htmlTable query3(stationsADT stationsAdt, FILE * query3);
 
-/* 
-
+/*
+    Funcion: query4
+    Uso: query4(stations, file);
+    ----------------------------
+    Esta funcion devuelve para cada estacion,
+    la cantidad total de viajes circulares entre
+    los años recibidos como argumentos por línea
+    de comando. Orden descendente por cantidad
+    de viajes y desempatado alfabeticamente.
 */
 
 htmlTable query4(stationsADT stationsAdt, FILE * query4);
 
-#endif
+/*
+    Funcion: query5
+    Uso: query5(stations, file, firstYear, lastYear);
+    -------------------------------------------------
+    Esta funcion devuelve para cada estacion,
+    la cantidad total de dias (entre los años
+    recibidos como argumentos por línea de
+    comando) con afluencia positiva, neutral,
+    y negativa. Orden alfabetico.
+*/
 
+htmlTable query5(stationsADT stationsAdt, FILE * query5, size_t firstYear, size_t lastYear);
+
+#endif

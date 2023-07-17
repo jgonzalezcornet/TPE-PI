@@ -9,6 +9,9 @@
 #define MAX_LEN 100
 #define DAYS_IN_YEAR 365
 
+// !!!!!! falta separar bien el front y el back
+// !!!!!! dejo esto para que nos encarguemos bien de chequear todos los frees, aunque no hay leaks pero por las dudas
+
 typedef struct stationByName {
     size_t id;
     size_t alfaId;
@@ -243,6 +246,7 @@ void newMat(stationsADT stationsAdt) {
 
 stationsADT newStations(size_t firstYear, size_t lastYear) {
     stationsADT aux = safeCalloc(1, sizeof(struct stationsCDT));
+
     aux->firstYear = firstYear;
     aux->lastYear = lastYear;
     return aux;
@@ -295,7 +299,9 @@ void toBeginTrip(stationsADT stationsAdt) {
 }
 
 size_t hasNextTrip(stationsADT stationsAdt) {
-    return stationsAdt->itTrip->tailByTrip != NULL;
+    if (stationsAdt->itTrip != NULL){  // !!!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
+        return stationsAdt->itTrip->tailByTrip != NULL;
+    }
 }
 
 size_t nextTrip(stationsADT stationsAdt) {
@@ -313,7 +319,7 @@ void toBeginRoundTrip(stationsADT stationsAdt) {
 }
 
 size_t hasNextRoundTrip(stationsADT stationsAdt) {
-    if (stationsAdt->itRoundTrip != NULL) {     // no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver eso
+    if (stationsAdt->itRoundTrip != NULL) {  // !!!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
         return stationsAdt->itRoundTrip->tailByTrip != NULL;
     }
 }
@@ -333,7 +339,7 @@ void toBeginName(stationsADT stationsAdt) {
 }
 
 size_t hasNextName(stationsADT stationsAdt) {
-    if (stationsAdt->itName != NULL) {       // no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver eso
+    if (stationsAdt->itName != NULL) {       // !!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
         return stationsAdt->itName->tailByName != NULL;
     }
 }
@@ -377,13 +383,13 @@ size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
 }
 
 char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA
+    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
         return stationsAdt->matrix[indexA][indexB].name;
     }
 }
 
 size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA
+    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
         return stationsAdt->matrix[indexA][indexB].quanTripsAtoB;
     }
 }
@@ -395,7 +401,7 @@ size_t getDim(stationsADT stationsAdt) {
 static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, int * negAfflux){
     size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     for (size_t i = 0; i < MONTHS; i++){
-        for (size_t j = 0; i < daysPerMonth[i]; j++){
+        for (size_t j = 0; j < daysPerMonth[i]; j++){
             if(matrix[i][j] > 0){
                 (*posAfflux)++;
             }
@@ -405,19 +411,22 @@ static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, i
             else{
                 (*neutralAfflux)++;
             }
-        }  
+        }
     }
-    
 }
 
+
 void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux){
-    *posAfflux = *neutralAfflux = *negAfflux = 0;
+    *posAfflux = 0;
+    *neutralAfflux = 0;
+    *negAfflux = 0;
     struct affluxByYear * aux = stationsAdt->itName->affluxByYear;
     if(aux == NULL){
         *neutralAfflux = DAYS_IN_YEAR * (lastYear - firstYear + 1);
         return;
     }
-    for(size_t iterYear = firstYear; iterYear <= lastYear; iterYear++){
+    size_t iterYear = firstYear;
+    while(iterYear <= lastYear){
         if(aux == NULL){  //no hay mas años por recorrer
             *neutralAfflux += DAYS_IN_YEAR * (lastYear - iterYear + 1);
             return;
@@ -425,10 +434,18 @@ void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int *
         else if(aux->year == iterYear){  //el año coincide
             getAffluxInMat(aux->affluxPerDay, posAfflux, neutralAfflux, negAfflux);
             aux = aux->tailByYear;
+            iterYear++;
         }
-        *neutralAfflux += DAYS_IN_YEAR; //el año no coincide
+        else if(aux->year > iterYear){
+            *neutralAfflux += DAYS_IN_YEAR; //el año no coincide
+            iterYear++;
+        }
+        else{
+            aux = aux->tailByYear;
+        }
     }
 }
+
 
 /* ----- Funciones para liberar memoria ----- */
 
@@ -458,7 +475,7 @@ static void freeStationsRec(stationByName * station) {
     free(station);
 }
 
-static void freeStationsRecByTrip(stationByTrip * station){ //!!!!!!!!!!!!!!AGREGADO POR LOS LEAK
+static void freeStationsRecByTrip(stationByTrip * station){ // !!!!!!!!!!!!!! AGREGADO POR LOS LEAK
     if(station == NULL) {
         return;
     }

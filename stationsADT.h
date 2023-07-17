@@ -9,13 +9,12 @@
 
 #ifndef _stations_h_
 #define _stations_h_
-#define NYC 0
-#define MON 1
 #define MONTHS 12
 #define MAX_YEAR 4000
 
 typedef struct stationsCDT *stationsADT;
 
+// !!!!! ver si hay alguna funcion que esta aca y no deberia estarlo (cuando organicemos bien front y back vamos a ver eso)
 
 /*
     Funcion: newStations
@@ -25,7 +24,7 @@ typedef struct stationsCDT *stationsADT;
     de datos "stations". Inicialmente, no habra informacion cargada.
 */
 
-stationsADT newStations();
+stationsADT newStations(size_t firstYear, size_t lastYear);
 
 /*
     Funcion: newMat
@@ -151,6 +150,12 @@ size_t hasNextName(stationsADT stationsAdt);
 
 int nextName(stationsADT stationsAdt);
 
+void toBeginRoundTrip(stationsADT stationsAdt);
+
+size_t hasNextRoundTrip(stationsADT stationsAdt);
+
+size_t nextRoundTrip(stationsADT stationsAdt);
+
 /*
     Funcion: getName
     Uso: name = getName(stations, flag);
@@ -216,6 +221,8 @@ char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB);
 
 size_t getDim(stationsADT stationsAdt);
 
+void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux);
+
 /*
     Funcion: safeMalloc
     Uso: ... = safeMalloc(...);
@@ -253,12 +260,6 @@ void * safeCalloc(size_t quan, size_t bytes);
 */
 
 void fillOrderedIds(stationsADT stationsAdt);
-
-void toBeginRoundTrip(stationsADT stationsAdt);
-
-size_t hasNextRoundTrip(stationsADT stationsAdt);
-
-size_t nextRoundTrip(stationsADT stationsAdt);
 
 void printList(stationsADT stationsAdt);
 

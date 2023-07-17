@@ -36,4 +36,3 @@ void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier);
 void parseEvents(stationsADT stationsAdt, FILE *file, size_t identifier);
 
 #endif
-

@@ -37,4 +37,3 @@ void addHTMLRow(htmlTable table, ...);
 void closeHTMLTable(htmlTable table);
 
 #endif
-

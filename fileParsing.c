@@ -6,6 +6,8 @@
 
 #define MAX_CHAR 250
 #define DELIM ";"
+#define NYC 0
+#define MON 1
 
 void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
     char str[MAX_CHAR], * name;
