@@ -22,7 +22,7 @@
 
 ## ELIMINAR ARCHIVOS
 	- 'make clean'		   para borrar todos los archivos
-	- 'make cleanQueries'  para borrar los archivos .csv creados por el programa
+	- 'make cleanQueries'	   para borrar los archivos .csv creados por el programa
 	- 'make cleanMON'	   para borrar el ejecutable MON y sus archivos objeto
 	- 'make cleanNYC' 	   para borrar el ejecutable NYC y sus archivos objeto
 
