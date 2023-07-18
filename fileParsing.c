@@ -26,14 +26,14 @@ void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
         }
         addStation(stationsAdt, id, name);
     }
-    fillOrderedIds(stationsAdt); // crea el arreglo ordenado por id
+    //fillOrderedIds(stationsAdt); // crea el arreglo ordenado por id
 }
 
 void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char isRange) {
     char str[MAX_CHAR], isMember, *aux;
     size_t fromId, toId, month, year, day;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
-    newMat(stationsAdt); // creo la matriz de (cant_estaciones)x(cant_estaciones)
+    //newMat(stationsAdt); // creo la matriz de (cant_estaciones)x(cant_estaciones)
 
     while(fgets(str, MAX_CHAR, file) != NULL) {
         isMember = 0;
@@ -55,6 +55,4 @@ void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char i
         day = atoi(strtok(NULL, "-"));
         processEvent(stationsAdt, year, month, day, fromId, toId, isMember, isRange);
     }
-    rearrangeByTrip(stationsAdt, 0); // crea la lista ordenada por trips
-    rearrangeByTrip(stationsAdt, 1); // crea la lista ordenada por trips circulares
 }

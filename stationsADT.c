@@ -191,6 +191,14 @@ static struct affluxByYear * addDayRec(struct affluxByYear * first, size_t year,
 }
 
 void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember, char isRange) {
+    
+    static int flag = 0; //para que se ejecute solamente la primera vez
+    if(!flag){
+        fillOrderedIds(stationsAdt);
+        newMat(stationsAdt);
+        flag = 1;
+    }
+    
     stationByName * statFrom = getStationById(stationsAdt, fromId);
     stationByName * statTo = getStationById(stationsAdt, toId);
 
@@ -309,6 +317,7 @@ void rearrangeByTrip(stationsADT stationsAdt, size_t flag) {
 /* ----- Funciones de iteración por viajes ----- */
 
 void toBeginTrip(stationsADT stationsAdt) {
+    rearrangeByTrip(stationsAdt, 0); // crea la lista ordenada por trips
     stationsAdt->itTrip = stationsAdt->firstByTrip;
 }
 
@@ -329,6 +338,7 @@ size_t nextTrip(stationsADT stationsAdt) {
 /* ----- Funciones de iteración por viajes circulares ----- */
 
 void toBeginRoundTrip(stationsADT stationsAdt) {
+    rearrangeByTrip(stationsAdt, 1); // crea la lista ordenada por trips circulares
     stationsAdt->itRoundTrip = stationsAdt->firstByRoundTrip;
 }
 
