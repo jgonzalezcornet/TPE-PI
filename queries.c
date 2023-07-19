@@ -13,7 +13,7 @@ static char * intToString(int num, size_t * status) {
     if (s == NULL){
         *status = 3;  // error de memoria --> va a hacer que el front aborte el programa
     }
-    int sz = sizeof(s);
+    int sz = MAX_DIGITS;
     snprintf(s, sz, "%zu", (size_t)num);
     return s;
 }
