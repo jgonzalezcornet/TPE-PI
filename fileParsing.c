@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <errno.h>
 #include "fileParsing.h"
 #include "stationsADT.h"
 
@@ -25,6 +26,9 @@ void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
             name = strtok(NULL, DELIM);
         }
         addStation(stationsAdt, id, name);
+        if(errno == ENOMEM) {
+            exit(1);
+        }
     }
     //fillOrderedIds(stationsAdt); // crea el arreglo ordenado por id
 }

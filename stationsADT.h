@@ -117,7 +117,7 @@ size_t hasNextTrip(stationsADT stationsAdt);
     exista. Si se pudo mover, retorna 1. Si no, 0.
 */
 
-size_t nextTrip(stationsADT stationsAdt);
+int nextTrip(stationsADT stationsAdt);
 
 /*
     Funcion: toBeginName
@@ -154,7 +154,7 @@ void toBeginRoundTrip(stationsADT stationsAdt);
 
 size_t hasNextRoundTrip(stationsADT stationsAdt);
 
-size_t nextRoundTrip(stationsADT stationsAdt);
+int nextRoundTrip(stationsADT stationsAdt);
 
 /*
     Funcion: getName
@@ -165,7 +165,11 @@ size_t nextRoundTrip(stationsADT stationsAdt);
     de la flag: 1 = itName, 0 = itTrip.
 */
 
-char * getName(stationsADT stationsAdt, size_t flag);
+char * getNameByName(stationsADT stationAdt);
+
+char * getNameByTrip(stationsADT stationAdt);
+
+char * getNameByRoundTrip(stationsADT stationAdt);
 
 /*
     Funcion: getTotalMemberTrips
@@ -176,7 +180,9 @@ char * getName(stationsADT stationsAdt, size_t flag);
     de la flag: 1 = itName, 0 = itTrip, 2 = itRoundTrip.
 */
 
-size_t getTotalTrips(stationsADT stationsAdt, size_t flag);
+int getTotalTripsByTrip(stationsADT stationAdt);
+
+int getTotalTripsByRoundTrip(stationsADT stationAdt);
 
 /*
     Funcion: getTripsByMonth
@@ -222,32 +228,6 @@ char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB);
 size_t getDim(stationsADT stationsAdt);
 
 void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux);
-
-/*
-    Funcion: safeMalloc
-    Uso: ... = safeMalloc(...);
-    ---------------------------
-    Esta funcion aloca memoria al igual que la 
-    funcion estandar "malloc" de stdlib.h,
-    pero de manera segura, estableciendo 
-    el errno en ENOMEM si no hay
-    memoria suficiente.
-*/
-
-void * safeMalloc(size_t bytes);
-
-/*
-    Funcion: safeCalloc
-    Uso: ... = safeCalloc(...);
-    ---------------------------
-    Esta funcion aloca memoria al igual que la
-    funcion estandar "calloc" de stdlib.h,
-    pero de manera segura, estableciendo 
-    el errno en ENOMEM si no hay
-    memoria suficiente.
-*/
-
-void * safeCalloc(size_t quan, size_t bytes);
 
 /*
     Funcion: fillOrderedIds

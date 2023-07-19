@@ -6,7 +6,7 @@ OUTPUT_FILE_NYC = bikeSharingNYC
 
 QUERIES = query1.csv query2.csv query3.csv query4.csv query5.csv query1.html query2.html query3.html query4.html query5.csv query5.html
 
-DEPENDENCIES = stationsADT.c queries.c fileParsing.c htmlTable.c
+DEPENDENCIES = stationsADT.c queries.c fileParsing.c htmlTable.c safeMemory.c
 
 all: MON NYC
 

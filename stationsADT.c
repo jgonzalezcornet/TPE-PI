@@ -5,12 +5,10 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <errno.h>
+#include "safeMemory.h"
 
 #define MAX_LEN 100
 #define DAYS_IN_YEAR 365
-
-// !!!!!! falta separar bien el front y el back
-// !!!!!! dejo esto para que nos encarguemos bien de chequear todos los frees, aunque no hay leaks pero por las dudas
 
 typedef struct stationByName {
     size_t id;
@@ -54,35 +52,17 @@ struct stationsCDT {
     size_t dim;
 };
 
-/* ----- Funciones para alocar memoria de forma segura ----- */
-
-void * safeMalloc(size_t bytes) {
-    void * mem = malloc(bytes);
-    if(mem == NULL) {
-        fprintf(stderr, "Error de memoria");
-        fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
-	    errno = ENOMEM;
-    }
-    return mem;
-}
-
-void * safeCalloc(size_t quan, size_t bytes) {
-    void * mem = calloc(quan, bytes);
-    if(mem == NULL) {
-        fprintf(stderr, "Error de memoria");
-        fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
-	    errno = ENOMEM;
-    }
-    return mem;
-}
-
 /* ---- Funciones para el vector de punteros a estaciones ----- */
+
+/* TODO define */
 
 static void swap(struct stationByName ** v, size_t i, size_t j) {
     struct stationByName *aux = v[i];
     v[i] = v[j];
     v[j] = aux;
 }
+
+/* TODO qsort */
 
 static void bubbleSort(struct stationByName ** v, size_t dim) {
     for(size_t i = 0; i < dim - 1; i++) {
@@ -327,7 +307,7 @@ size_t hasNextTrip(stationsADT stationsAdt) {
     }
 }
 
-size_t nextTrip(stationsADT stationsAdt) {
+int nextTrip(stationsADT stationsAdt) {
     size_t c;
     if((c = hasNextTrip(stationsAdt))) {
         stationsAdt->itTrip = stationsAdt->itTrip->tailByTrip;
@@ -348,7 +328,7 @@ size_t hasNextRoundTrip(stationsADT stationsAdt) {
     }
 }
 
-size_t nextRoundTrip(stationsADT stationsAdt) {
+int nextRoundTrip(stationsADT stationsAdt) {
     size_t c;
     if((c = hasNextRoundTrip(stationsAdt))) {
         stationsAdt->itRoundTrip = stationsAdt->itRoundTrip->tailByTrip;
@@ -363,7 +343,7 @@ void toBeginName(stationsADT stationsAdt) {
 }
 
 size_t hasNextName(stationsADT stationsAdt) {
-    if (stationsAdt->itName != NULL) {       // !!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
+    if(stationsAdt->itName != NULL) {       // !!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
         return stationsAdt->itName->tailByName != NULL;
     }
 }
@@ -377,43 +357,56 @@ int nextName(stationsADT stationsAdt) {
 }
 
 /* ----- Funciones para obtener datos del Adt desde queries.c ----- */
-
-char * getName(stationsADT stationsAdt, size_t flag) {
-    if(flag == 0 && stationsAdt->itTrip != NULL) {
-        return stationsAdt->itTrip->name;
-    } else if(flag == 1 && stationsAdt->itName != NULL) {
-        return stationsAdt->itName->name;
-    } else if(stationsAdt->itRoundTrip != NULL) {
-        return stationsAdt->itRoundTrip->name;
+char * getNameByName(stationsADT stationAdt) {
+    if(stationAdt->itName != NULL) {
+        return stationAdt->itName->name;
     }
     return NULL;
 }
 
-size_t getTotalTrips(stationsADT stationsAdt, size_t flag) {
-    if(flag == 0 && stationsAdt->itTrip != NULL) {
-        return stationsAdt->itTrip->quanTrips;
-    } else if(flag == 1 && stationsAdt->itName != NULL) {
-        return stationsAdt->itName->quanTripsMember;
-    } else if(stationsAdt->itRoundTrip != NULL) {
-        return stationsAdt->itRoundTrip->quanTrips;
+char * getNameByTrip(stationsADT stationAdt) {
+    if(stationAdt->itTrip != NULL) {
+        return stationAdt->itTrip->name;
+    }
+    return NULL;
+}
+
+char * getNameByRoundTrip(stationsADT stationAdt) {
+    if(stationAdt->itRoundTrip != NULL) {
+        return stationAdt->itRoundTrip->name;
+    }
+    return NULL;
+}
+
+int getTotalTripsByTrip(stationsADT stationAdt) {
+    if(stationAdt->itTrip != NULL) {
+        return stationAdt->itTrip->quanTrips;
+    }
+    return -1;
+}
+
+int getTotalTripsByRoundTrip(stationsADT stationAdt) {
+    if(stationAdt->itRoundTrip != NULL) {
+        return stationAdt->itRoundTrip->quanTrips;
     }
     return -1;
 }
 
 size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
-    if (month >= 0 && month <= 11) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
+    if(month >= 0 && month <= 11) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
         return stationsAdt->itName->quanTripsMonth[month];
     }
+    return -1;
 }
 
 char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
+    if(indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
         return stationsAdt->matrix[indexA][indexB].name;
     }
 }
 
 size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    if (indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
+    if(indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
         return stationsAdt->matrix[indexA][indexB].quanTripsAtoB;
     }
 }
@@ -422,17 +415,15 @@ size_t getDim(stationsADT stationsAdt) {
 	return stationsAdt->dim;
 }
 
-static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, int * negAfflux){
+static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, int * negAfflux) {
     size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    for (size_t i = 0; i < MONTHS; i++){
-        for (size_t j = 0; j < daysPerMonth[i]; j++){
-            if(matrix[i][j] > 0){
+    for(size_t i = 0; i < MONTHS; i++) {
+        for(size_t j = 0; j < daysPerMonth[i]; j++) {
+            if(matrix[i][j] > 0) {
                 (*posAfflux)++;
-            }
-            else if(matrix[i][j] < 0){
+            } else if(matrix[i][j] < 0) {
                 (*negAfflux)++;
-            }
-            else{
+            } else {
                 (*neutralAfflux)++;
             }
         }
@@ -440,56 +431,53 @@ static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, i
 }
 
 
-void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux){
+void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux) {
     *posAfflux = 0;
     *neutralAfflux = 0;
     *negAfflux = 0;
     struct affluxByYear * aux = stationsAdt->itName->affluxByYear;
-    if(aux == NULL){
+    if(aux == NULL) {
         *neutralAfflux = DAYS_IN_YEAR * (lastYear - firstYear + 1);
         return;
     }
     size_t iterYear = firstYear;
-    while(iterYear <= lastYear){
-        if(aux == NULL){  //no hay mas años por recorrer
+    while(iterYear <= lastYear) {
+        if(aux == NULL) {  //no hay mas años por recorrer
             *neutralAfflux += DAYS_IN_YEAR * (lastYear - iterYear + 1);
             return;
-        }
-        else if(aux->year == iterYear){  //el año coincide
+        } else if(aux->year == iterYear) {  //el año coincide
             getAffluxInMat(aux->affluxPerDay, posAfflux, neutralAfflux, negAfflux);
             aux = aux->tailByYear;
             iterYear++;
-        }
-        else if(aux->year > iterYear){
+        } else if(aux->year > iterYear) {
             *neutralAfflux += DAYS_IN_YEAR; //el año no coincide
             iterYear++;
-        }
-        else{
+        } else{
             aux = aux->tailByYear;
         }
     }
 }
 
-size_t getFirstYear(stationsADT stationsAdt){
+size_t getFirstYear(stationsADT stationsAdt) {
     return stationsAdt->firstYear;
 }
 
-size_t getLastYear(stationsADT stationsAdt){
+size_t getLastYear(stationsADT stationsAdt) {
     return stationsAdt->lastYear;
 }
 
 
 /* ----- Funciones para liberar memoria ----- */
 
-static void freeMatrixByDay(int ** matrix){
-    for (size_t i = 0; i < MONTHS; i++){
+static void freeMatrixByDay(int ** matrix) {
+    for(size_t i = 0; i < MONTHS; i++) {
         free(matrix[i]);
     }
     free(matrix);
 }
 
-static void freeAffluxByYearRec( struct affluxByYear * first){
-    if(first == NULL){
+static void freeAffluxByYearRec(struct affluxByYear * first) {
+    if(first == NULL) {
         return;
     }
     freeAffluxByYearRec(first->tailByYear);
@@ -507,7 +495,7 @@ static void freeStationsRec(stationByName * station) {
     free(station);
 }
 
-static void freeStationsRecByTrip(stationByTrip * station){ // !!!!!!!!!!!!!! AGREGADO POR LOS LEAK
+static void freeStationsRecByTrip(stationByTrip * station) {
     if(station == NULL) {
         return;
     }
