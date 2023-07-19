@@ -28,7 +28,7 @@ typedef struct stationByTrip {
 } stationByTrip;
 
 typedef struct stationMat {
-    char * name;
+    stationByName * station;
     size_t quanTripsAtoB;
 } stationMat;
 
@@ -131,14 +131,14 @@ void addStation(stationsADT stationsAdt, size_t id, char * name) {
     stationsAdt->dim += flag;
 }
 
-static void addTripAtoB(stationMat ** mat, char * nameA, char * nameB, size_t indexA, size_t indexB) {
-    if(mat[indexA][indexB].name == NULL) {
-        mat[indexA][indexB].name = safeMalloc(MAX_LEN);
-        strcpy(mat[indexA][indexB].name, nameA);
+static void addTripAtoB(stationMat ** mat, stationByName * stationA, stationByName * stationB, size_t indexA, size_t indexB) {
+    if(mat[indexA][indexB].station == NULL) {
+        //mat[indexA][indexB].station = safeMalloc(sizeof(stationByName));
+        mat[indexA][indexB].station = stationA;
     }
-    if(mat[indexB][indexA].name == NULL){
-        mat[indexB][indexA].name = safeMalloc(MAX_LEN);
-        strcpy(mat[indexB][indexA].name, nameB); 
+    if(mat[indexB][indexA].station == NULL){
+        //mat[indexB][indexA].station = safeMalloc(sizeof(stationByName));
+        mat[indexB][indexA].station = stationB;
     }
     mat[indexA][indexB].quanTripsAtoB++;
 }
@@ -196,8 +196,8 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
         }
     }
 
-    char ** nameA = safeMalloc(sizeof(char *));
-    char ** nameB = safeMalloc(sizeof(char *));
+    //char ** nameA = safeMalloc(sizeof(char *));
+    //char ** nameB = safeMalloc(sizeof(char *));
     size_t flagA, flagB;
     flagA = 0;
     flagB = 0;
@@ -211,13 +211,13 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
 	    statFrom->quanTripsMonth[month - 1]++;
 	    flagA = 1;
         indexA = statFrom->alfaId;
-	    *nameA = statFrom->name;
+	    //*nameA = statFrom->name;
     }
 
     if(statTo != NULL) {
         flagB = 1;
         indexB = statTo->alfaId;
-        *nameB = statTo->name;
+        //*nameB = statTo->name;
     }
 
     if(flagA && flagB) {
@@ -229,12 +229,12 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
             }
         }
         if(indexA != indexB){
-            addTripAtoB(stationsAdt->matrix , *nameA, *nameB, indexA, indexB);
+            addTripAtoB(stationsAdt->matrix , statFrom, statTo, indexA, indexB);
         }
         
     }
-    free(nameA);
-    free(nameB);
+    //free(nameA);
+    //free(nameB);
 }
 
 void newMat(stationsADT stationsAdt) {
@@ -401,8 +401,11 @@ size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
 
 char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
     if(indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
-        return stationsAdt->matrix[indexA][indexB].name;
+        if(stationsAdt->matrix[indexA][indexB].station != NULL){
+            return stationsAdt->matrix[indexA][indexB].station->name;
+        }
     }
+    return NULL;
 }
 
 size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
@@ -505,12 +508,7 @@ static void freeStationsRecByTrip(stationByTrip * station) {
 }
 
 static void freeMatrix(stationMat ** matrix, size_t dim) {
-    for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++){
-            if(matrix[i][j].name != NULL) {
-                free(matrix[i][j].name);
-            }
-        }
+    for (size_t i = 0; i < dim; i++) {
         free(matrix[i]);
     }
     free(matrix);
