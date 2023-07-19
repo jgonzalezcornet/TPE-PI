@@ -3,6 +3,7 @@
 #include "queries.h"
 #include "stationsADT.h"
 #include "fileParsing.h"
+#include "safeMemory.h"
 
 #define QUERIES 5
 
@@ -12,17 +13,20 @@
 #define CITY 0  // si queremos trabajar sobre NYC, utilizamos el identificador CITY = 0
 #endif
 
-// !!!!!!!!! falta arreglar bien esto de chequear los malloc y calloc, lo de errno no es suficiente
-
 // Funciones para cerrar todos los archivos
 void closeFiles(size_t count, FILE * files[]);
 void closeTables(size_t count, htmlTable tables[]);
 
 int main(int argc, char *argv[]) {
+
+    enum {OK=0, ERROR, FILEERROR, MEMORYERROR};
+    size_t status = 0;
+
     if(argc > 5 || argc < 3 || (argc == 5 && atoi(argv[3]) > atoi(argv[4]))) {
         fprintf(stderr, "Cantidad inválida de parámetros.\n");
         fprintf(stdout, "Uso: ./bikeSharingMON archivo_data_alquileres archivo_data_estaciones anio_1 anio_2\n");
-        exit(1);
+        status = ERROR;
+        exit(ERROR);
     }
 
     // Abrimos todos los archivos, estableciendo el errno en 0 para poder chequear si hay errores en la apertura
@@ -48,27 +52,30 @@ int main(int argc, char *argv[]) {
     if(errno == ENOENT) {
         closeFiles(fileCount, files); // si alguno de los archivos no se pudo abrir, cierro todos
         fprintf(stderr, "No se pudo abrir alguno de los archivos.\n");
-        exit(1);
+        status = FILEERROR;
+        exit(FILEERROR);
     }
 
-    stationsADT stationsAdt = newStations(firstYear, lastYear);
+    stationsADT stationsAdt = newStations(firstYear, lastYear, &status);
 
-    if(errno == ENOMEM) {
+    // para toda la duracion del programa, si en alguna instancia flag == MEMORYERROR el programa aborta
+    if (status == MEMORYERROR){
         fprintf(stderr, "No hay memoria suficiente para llevar a cabo el programa.\n");
         closeFiles(fileCount, files);
-        exit(1);
+        status = MEMORYERROR;
+        exit(MEMORYERROR);
     }
 
     // Carga de datos
-    parseStations(stationsAdt, stations, CITY);
-    parseEvents(stationsAdt, events, CITY, isRange);
+    parseStations(stationsAdt, stations, CITY, &status);
+    parseEvents(stationsAdt, events, CITY, isRange, &status);
 
     // Resolucion de las queries (tanto en HTML como en CSV)
-    htmlTable tableQuery1 = query1(stationsAdt, que1);
-    htmlTable tableQuery2 = query2(stationsAdt, que2);
-    htmlTable tableQuery3 = query3(stationsAdt, que3);
-    htmlTable tableQuery4 = query4(stationsAdt, que4);
-    htmlTable tableQuery5 = query5(stationsAdt, que5, getFirstYear(stationsAdt), getLastYear(stationsAdt));
+    htmlTable tableQuery1 = query1(stationsAdt, que1, &status);
+    htmlTable tableQuery2 = query2(stationsAdt, que2, &status);
+    htmlTable tableQuery3 = query3(stationsAdt, que3, &status);
+    htmlTable tableQuery4 = query4(stationsAdt, que4, &status);
+    htmlTable tableQuery5 = query5(stationsAdt, que5, getFirstYear(stationsAdt), getLastYear(stationsAdt), &status);
 
     htmlTable tables[] = {tableQuery1, tableQuery2, tableQuery3, tableQuery4, tableQuery5};
 
@@ -79,7 +86,7 @@ int main(int argc, char *argv[]) {
     closeFiles(fileCount, files);
     closeTables(tableCount, tables);
 
-    return 0;
+    return status;  // para saber el estado del programa al finalizar la ejecucion
 }
 
 void closeTables(size_t count, htmlTable tables[]) {

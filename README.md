@@ -26,4 +26,5 @@
 	- 'make cleanMON'	   para borrar el ejecutable MON y sus archivos objeto
 	- 'make cleanNYC' 	   para borrar el ejecutable NYC y sus archivos objeto
 
-* en caso de que se creen los directorios bikeSharingMON.dSYM y bikeSharingNYC.dSYM, debera eliminarlos manualmente
+* en caso de que se creen los directorios bikeSharingMON.dSYM y bikeSharingNYC.dSYM, debera eliminarlos manualmente.
+* los viajes entre estaciones deben comenzar y finalizar en el mismo dia para el óptimo funcionamiento del programa.

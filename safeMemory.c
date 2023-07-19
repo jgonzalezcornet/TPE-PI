@@ -2,20 +2,20 @@
 #include <stdio.h>
 #include "safeMemory.h"
 
-void * safeMalloc(size_t bytes) {
+void * safeMalloc(size_t bytes, size_t * status, stationsADT stationsAdt) {
     void * mem = malloc(bytes);
     if(mem == NULL) {
-        fprintf(stderr, "Error de memoria");
-        fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
+        freeStations(stationsAdt);
+        *status = 3;    // error de memoria
     }
     return mem;
 }
 
-void * safeCalloc(size_t quan, size_t bytes) {
+void * safeCalloc(size_t quan, size_t bytes, size_t * status, stationsADT stationsAdt) {
     void * mem = calloc(quan, bytes);
     if(mem == NULL) {
-        fprintf(stderr, "Error de memoria");
-        fprintf(stdout, "Uso de mas memoria de la que el sistema puede proveer");
+        freeStations(stationsAdt);
+        *status = 3;    // error de memoria
     }
     return mem;
 }

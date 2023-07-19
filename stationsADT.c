@@ -56,8 +56,6 @@ struct stationsCDT {
 
 /* ---- Funciones para el vector de punteros a estaciones ----- */
 
-/* TODO qsort */
-
 int compareStations(struct stationByName ** v1, struct stationByName ** v2) {
     size_t s1Id = (*v1)->id;
     size_t s2Id = (*v2)->id;
@@ -79,13 +77,16 @@ static void traverseListToFillArray(stationByName * first, size_t i, struct stat
     traverseListToFillArray(first->tailByName, i + 1, ids);
 }
 
-void fillOrderedIds(stationsADT stationsAdt) {
-    stationsAdt->orderedIds = safeMalloc(stationsAdt->dim * sizeof(struct stationByName *));
+void fillOrderedIds(stationsADT stationsAdt, size_t * status) {
+    stationsAdt->orderedIds = safeMalloc(stationsAdt->dim * sizeof(struct stationByName *), status, stationsAdt);
     traverseListToFillArray(stationsAdt->firstByName, 0, stationsAdt->orderedIds);
     qsort(stationsAdt->orderedIds, stationsAdt->dim, sizeof(stationByName *), (compFn)compareStations); // casteo el comparador a compFn
 }
 
 static struct stationByName * getStationById(stationsADT stationsAdt, size_t id) {
+    if (stationsAdt->dim == 0){
+        return NULL;
+    }
     int low = 0, high = stationsAdt->dim;
 
     while(high - low > 1) {
@@ -105,60 +106,58 @@ static struct stationByName * getStationById(stationsADT stationsAdt, size_t id)
 
 /* ----- Funciones para resolver el procesamiento de datos a un TAD ----- */
 
-static struct stationByName * addStationRec(struct stationByName * first, size_t id, char * name, size_t * flag) {
+static struct stationByName * addStationRec(stationsADT stationsAdt, stationByName * first, size_t id, char * name, size_t * newFlag, size_t * status) {
     int c;
     if(first == NULL || (c = strcasecmp(first->name, name)) > 0) {
-        stationByName * aux = safeCalloc(1, sizeof(stationByName));
+        stationByName * aux = safeCalloc(1, sizeof(stationByName), status, stationsAdt);
         aux->id = id;
-        aux->name = safeMalloc(strlen(name) + 1);
+        aux->name = safeMalloc(strlen(name) + 1, status, stationsAdt);
         strcpy(aux->name, name);
         aux->tailByName = first;
-        *flag = 1;
+        *newFlag = 1;
         return aux;
     } else if(c < 0) {
-        first->tailByName = addStationRec(first->tailByName, id, name, flag);
+        first->tailByName = addStationRec(stationsAdt, first->tailByName, id, name, newFlag, status);
     }
     return first;
 }
 
-void addStation(stationsADT stationsAdt, size_t id, char * name) {
-    size_t flag = 0;
-    stationsAdt->firstByName = addStationRec(stationsAdt->firstByName, id, name, &flag);
-    stationsAdt->dim += flag;
+void addStation(stationsADT stationsAdt, size_t id, char * name, size_t * status) {
+    size_t newFlag = 0;
+    stationsAdt->firstByName = addStationRec(stationsAdt, stationsAdt->firstByName, id, name, &newFlag, status);
+    stationsAdt->dim += newFlag;
 }
 
 static void addTripAtoB(stationMat ** mat, stationByName * stationA, stationByName * stationB, size_t indexA, size_t indexB) {
     if(mat[indexA][indexB].station == NULL) {
-        //mat[indexA][indexB].station = safeMalloc(sizeof(stationByName));
         mat[indexA][indexB].station = stationA;
     }
     if(mat[indexB][indexA].station == NULL){
-        //mat[indexB][indexA].station = safeMalloc(sizeof(stationByName));
         mat[indexB][indexA].station = stationB;
     }
     mat[indexA][indexB].quanTripsAtoB++;
 }
 
-static int ** newMatPerYear(size_t * daysPerMonth){
-    int ** aux = safeMalloc(MONTHS * sizeof(int *));
+static int ** newMatPerYear(stationsADT stationsAdt, size_t * daysPerMonth, size_t * status){
+    int ** aux = safeMalloc(MONTHS * sizeof(int *), status, stationsAdt);
     for(size_t i = 0; i < MONTHS; i++){
-        aux[i] = safeCalloc(1, daysPerMonth[i] * sizeof(int)); //todos los dias arrancan en 0
+        aux[i] = safeCalloc(1, daysPerMonth[i] * sizeof(int), status, stationsAdt); //todos los dias arrancan en 0
     }
     return aux;
 }
 
-static struct affluxByYear * addDayRec(struct affluxByYear * first, size_t year, size_t month, size_t day, int state){
+static struct affluxByYear * addDayRec(stationsADT stationsAdt, struct affluxByYear * first, size_t year, size_t month, size_t day, int state, size_t * status){
     if(first == NULL || first->year > year){
-        struct affluxByYear * aux = safeMalloc(sizeof(struct affluxByYear));
+        struct affluxByYear * aux = safeMalloc(sizeof(struct affluxByYear), status, stationsAdt);
         size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        aux->affluxPerDay = newMatPerYear(daysPerMonth);
+        aux->affluxPerDay = newMatPerYear(stationsAdt, daysPerMonth, status);
         aux->affluxPerDay[month-1][day-1] += state;
         aux->year = year;
         aux->tailByYear = first;
         return aux;
     }
     else if(first->year < year){
-        first->tailByYear = addDayRec(first->tailByYear, year, month, day, state);
+        first->tailByYear = addDayRec(stationsAdt, first->tailByYear, year, month, day, state, status);
     }
     else{
         first->affluxPerDay[month-1][day-1] += state;
@@ -166,12 +165,12 @@ static struct affluxByYear * addDayRec(struct affluxByYear * first, size_t year,
     return first;
 }
 
-void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember, char isRange) {
+void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember, char isRange, size_t * status) {
     
     static int flag = 0; //para que se ejecute solamente la primera vez
     if(!flag){
-        fillOrderedIds(stationsAdt);
-        newMat(stationsAdt);
+        fillOrderedIds(stationsAdt, status);
+        newMat(stationsAdt, status);
         flag = 1;
     }
     
@@ -214,8 +213,8 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
 
     if(flagA && flagB) {
         if(stationsAdt->firstYear <= year && year <= stationsAdt->lastYear) {
-            statFrom->affluxByYear = addDayRec(statFrom->affluxByYear, year, month, day, -1);
-            statTo->affluxByYear = addDayRec(statTo->affluxByYear, year, month, day, 1);
+            statFrom->affluxByYear = addDayRec(stationsAdt, statFrom->affluxByYear, year, month, day, -1, status);
+            statTo->affluxByYear = addDayRec(stationsAdt, statTo->affluxByYear, year, month, day, 1, status);
             if(indexA == indexB){
                 statFrom->quanRoundTrips++;
             }
@@ -227,31 +226,35 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
     
 }
 
-void newMat(stationsADT stationsAdt) {
+void newMat(stationsADT stationsAdt, size_t * status) {
     size_t dim = stationsAdt->dim;
-    stationMat ** aux = safeMalloc(dim * sizeof(stationMat *));
+    stationMat ** aux = safeMalloc(dim * sizeof(stationMat *), status, stationsAdt);
     for(size_t i = 0; i < dim; i++) {
-        aux[i] = safeCalloc(1, dim * sizeof(stationMat));
+        aux[i] = safeCalloc(1, dim * sizeof(stationMat), status, stationsAdt);
     }
     stationsAdt->matrix = aux;
 }
 
-stationsADT newStations(size_t firstYear, size_t lastYear) {
-    stationsADT aux = safeCalloc(1, sizeof(struct stationsCDT));
-
-    aux->firstYear = firstYear;
-    aux->lastYear = lastYear;
+stationsADT newStations(size_t firstYear, size_t lastYear, size_t * status) {
+    stationsADT aux = safeCalloc(1, sizeof(struct stationsCDT), status, NULL);
+    if (aux != NULL){
+        aux->dim = 0;
+        aux->firstYear = firstYear;
+        aux->lastYear = lastYear;
+    }
     return aux;
 }
 
 /* ----- Funciones para crear la lista ordenada por viajes ----- */
 
-static stationByTrip * createStationByTripNode(char * name, size_t quanTrips) {
-	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip));
-	newNode->name = safeMalloc(strlen(name) + 1);
-	strcpy(newNode->name, name);
-	newNode->quanTrips = quanTrips;
-	newNode->tailByTrip = NULL;
+static stationByTrip * createStationByTripNode(stationsADT stationsAdt, char * name, size_t quanTrips, size_t * status) {
+	stationByTrip * newNode = safeMalloc(sizeof(stationByTrip), status, stationsAdt);
+    if (newNode != NULL){
+        newNode->name = safeMalloc(strlen(name) + 1, status, stationsAdt);
+        strcpy(newNode->name, name);
+        newNode->quanTrips = quanTrips;
+        newNode->tailByTrip = NULL;
+    }
 	return newNode;
 }
 
@@ -275,10 +278,10 @@ static void insertByTrip(stationsADT stationsAdt, stationByTrip * newNode, size_
 }
 
 //flag == 0 -> firstByTrip    flag == 1 -> firstByRoundTrip
-void rearrangeByTrip(stationsADT stationsAdt, size_t flag) {
+void rearrangeByTrip(stationsADT stationsAdt, size_t flag, size_t * status) {
 	stationByName * current = stationsAdt->firstByName;
 	while(current != NULL) {
-        stationByTrip * newNode = createStationByTripNode(current->name, (flag == 0 ? current->quanTripsMember : current->quanRoundTrips));
+        stationByTrip * newNode = createStationByTripNode(stationsAdt, current->name, (flag == 0 ? current->quanTripsMember : current->quanRoundTrips), status);
 		insertByTrip(stationsAdt, newNode, flag);
 		current = current->tailByName;
 	}
@@ -286,21 +289,22 @@ void rearrangeByTrip(stationsADT stationsAdt, size_t flag) {
 
 /* ----- Funciones de iteración por viajes ----- */
 
-void toBeginTrip(stationsADT stationsAdt) {
-    rearrangeByTrip(stationsAdt, 0); // crea la lista ordenada por trips
+void toBeginTrip(stationsADT stationsAdt, size_t * status) {
+    rearrangeByTrip(stationsAdt, 0, status); // crea la lista ordenada por trips
     stationsAdt->itTrip = stationsAdt->firstByTrip;
 }
 
-int hasNextTrip(stationsADT stationsAdt) {
-    if (stationsAdt->itTrip != NULL){  // !!!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
+int hasNextTrip(stationsADT stationsAdt, size_t * status) {
+    if (stationsAdt->itTrip != NULL){
         return stationsAdt->itTrip->tailByTrip != NULL;
     }
+    *status = 1;    // marcamos que hubo un error durante el programa para explicar los malos resultados pero no abortamos
     return -1;
 }
 
-int nextTrip(stationsADT stationsAdt) {
+int nextTrip(stationsADT stationsAdt, size_t * status) {
     size_t c;
-    if((c = hasNextTrip(stationsAdt))) {
+    if((c = hasNextTrip(stationsAdt, status))) {
         stationsAdt->itTrip = stationsAdt->itTrip->tailByTrip;
     }
     return c;
@@ -308,21 +312,22 @@ int nextTrip(stationsADT stationsAdt) {
 
 /* ----- Funciones de iteración por viajes circulares ----- */
 
-void toBeginRoundTrip(stationsADT stationsAdt) {
-    rearrangeByTrip(stationsAdt, 1); // crea la lista ordenada por trips circulares
+void toBeginRoundTrip(stationsADT stationsAdt, size_t * status) {
+    rearrangeByTrip(stationsAdt, 1, status); // crea la lista ordenada por trips circulares
     stationsAdt->itRoundTrip = stationsAdt->firstByRoundTrip;
 }
 
-int hasNextRoundTrip(stationsADT stationsAdt) {
-    if (stationsAdt->itRoundTrip != NULL) {  // !!!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
+int hasNextRoundTrip(stationsADT stationsAdt, size_t * status) {
+    if (stationsAdt->itRoundTrip != NULL) {
         return stationsAdt->itRoundTrip->tailByTrip != NULL;
     }
+    *status = 1; // marcamos que hubo un error durante el programa para explicar los malos resultados pero no abortamos
     return -1;
 }
 
-int nextRoundTrip(stationsADT stationsAdt) {
+int nextRoundTrip(stationsADT stationsAdt, size_t * status) {
     size_t c;
-    if((c = hasNextRoundTrip(stationsAdt))) {
+    if((c = hasNextRoundTrip(stationsAdt, status))) {
         stationsAdt->itRoundTrip = stationsAdt->itRoundTrip->tailByTrip;
     }
     return c;
@@ -334,66 +339,73 @@ void toBeginName(stationsADT stationsAdt) {
     stationsAdt->itName = stationsAdt->firstByName;
 }
 
-int hasNextName(stationsADT stationsAdt) {
-    if(stationsAdt->itName != NULL) {       // !!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
+int hasNextName(stationsADT stationsAdt, size_t * status) {
+    if(stationsAdt->itName != NULL) {
         return stationsAdt->itName->tailByName != NULL;
     }
+    *status = 1; // marcamos que hubo un error durante el programa para explicar los malos resultados pero no abortamos
     return -1;
 }
 
-int nextName(stationsADT stationsAdt) {
+int nextName(stationsADT stationsAdt, size_t * status) {
 	size_t c;
-	if((c = hasNextName(stationsAdt))) {
+	if((c = hasNextName(stationsAdt, status))) {
 		stationsAdt->itName = stationsAdt->itName->tailByName;
 	}
 	return c;
 }
 
 /* ----- Funciones para obtener datos del Adt desde queries.c ----- */
-char * getNameByName(stationsADT stationAdt) {
-    if(stationAdt->itName != NULL) {
-        return stationAdt->itName->name;
+char * getNameByName(stationsADT stationsAdt, size_t * status) {
+    if(stationsAdt->itName != NULL) {
+        return stationsAdt->itName->name;
     }
+    *status = 1; // marcamos que hubo un error durante el programa para explicar los malos resultados pero no abortamos
     return NULL;
 }
 
-char * getNameByTrip(stationsADT stationAdt) {
-    if(stationAdt->itTrip != NULL) {
-        return stationAdt->itTrip->name;
+char * getNameByTrip(stationsADT stationsAdt, size_t * status) {
+    if(stationsAdt->itTrip != NULL) {
+        return stationsAdt->itTrip->name;
     }
+    *status = 1; // marcamos que hubo un error durante el programa para explicar los malos resultados pero no abortamos
     return NULL;
 }
 
-char * getNameByRoundTrip(stationsADT stationAdt) {
-    if(stationAdt->itRoundTrip != NULL) {
-        return stationAdt->itRoundTrip->name;
+char * getNameByRoundTrip(stationsADT stationsAdt, size_t * status) {
+    if(stationsAdt->itRoundTrip != NULL) {
+        return stationsAdt->itRoundTrip->name;
     }
+    *status = 1; // marcamos que hubo un error durante el programa para explicar los malos resultados pero no abortamos
     return NULL;
 }
 
-int getTotalTripsByTrip(stationsADT stationAdt) {
-    if(stationAdt->itTrip != NULL) {
-        return stationAdt->itTrip->quanTrips;
+int getTotalTripsByTrip(stationsADT stationsAdt, size_t * status) {
+    if(stationsAdt->itTrip != NULL) {
+        return stationsAdt->itTrip->quanTrips;
     }
+    *status = 1; // marcamos que hubo un error durante el programa para explicar los malos resultados pero no abortamos
     return -1;
 }
 
-int getTotalTripsByRoundTrip(stationsADT stationAdt) {
-    if(stationAdt->itRoundTrip != NULL) {
-        return stationAdt->itRoundTrip->quanTrips;
+int getTotalTripsByRoundTrip(stationsADT stationsAdt, size_t * status) {
+    if(stationsAdt->itRoundTrip != NULL) {
+        return stationsAdt->itRoundTrip->quanTrips;
     }
+    *status = 1;
     return -1;
 }
 
-size_t getTripsByMonth(stationsADT stationsAdt, size_t month) {
-    if(month >= 0 && month <= 11) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
+size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t * status) {
+    if(month <= 11) {
         return stationsAdt->itName->quanTripsMonth[month];
     }
+    *status = 1;
     return -1;
 }
 
 char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    if(indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
+    if(indexA < stationsAdt->dim && indexB < stationsAdt->dim && stationsAdt->matrix != NULL) {
         if(stationsAdt->matrix[indexA][indexB].station != NULL){
             return stationsAdt->matrix[indexA][indexB].station->name;
         }
@@ -402,7 +414,7 @@ char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
 }
 
 int getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
-    if(indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
+    if(indexA < stationsAdt->dim && indexB < stationsAdt->dim && stationsAdt->matrix != NULL) {
         return stationsAdt->matrix[indexA][indexB].quanTripsAtoB;
     }
     return -1;
@@ -412,7 +424,7 @@ size_t getDim(stationsADT stationsAdt) {
 	return stationsAdt->dim;
 }
 
-static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, int * negAfflux) {
+static void getAffluxInMat(int ** matrix, int * posAfflux, int * neutralAfflux, int * negAfflux) {
     size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     for(size_t i = 0; i < MONTHS; i++) {
         for(size_t j = 0; j < daysPerMonth[i]; j++) {
@@ -511,47 +523,9 @@ void freeStations(stationsADT stationsAdt) {
     freeStationsRec(stationsAdt->firstByName);
     freeStationsRecByTrip(stationsAdt->firstByTrip);
     freeStationsRecByTrip(stationsAdt->firstByRoundTrip);
-    freeMatrix(stationsAdt->matrix, stationsAdt->dim);
+    if (stationsAdt->matrix != NULL){
+        freeMatrix(stationsAdt->matrix, stationsAdt->dim);
+    }
     free(stationsAdt->orderedIds);
     free(stationsAdt);
-}
-
-/* ----- Funciones para testeos ----- */
-
-static void printListRec(stationByName * station){
-    if(station == NULL){
-        return;
-    }
-    printf("%s\tID: %zu\n",station->name,station->id);
-    printListRec(station->tailByName);
-}
-
-void printList(stationsADT stationsAdt){
-    printListRec(stationsAdt->firstByName);
-}
-
-void printOrderedByIds(stationsADT stationsAdt){
-
-    for (size_t i = 0; i < stationsAdt->dim; i++){
-        printf("%s\t id:%zu\n", stationsAdt->orderedIds[i]->name, stationsAdt->orderedIds[i]->id);    
-    }
-}
-
-void printMatPerYear(stationsADT stationAdt)
-{
-    size_t count = 0;
-    if(stationAdt->firstByName->affluxByYear == NULL){
-        return;
-    }
-    size_t daysPerMonth[MONTHS] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    printf("ANIO %zu:\n",stationAdt->firstByName->affluxByYear->year);
-    for (size_t i = 0; i < MONTHS; i++)
-    {
-        for (size_t j = 0; j < daysPerMonth[i]; j++)
-        {
-            printf("%d ",stationAdt->firstByName->affluxByYear->affluxPerDay[i][j]);
-            count++;
-        }
-        putchar('\n');
-    }
 }

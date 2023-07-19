@@ -10,7 +10,7 @@
 #define NYC 0
 #define MON 1
 
-void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
+void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier, size_t * flag) {
     char str[MAX_CHAR], * name;
     size_t id;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
@@ -25,19 +25,14 @@ void parseStations(stationsADT stationsAdt, FILE * file, size_t identifier) {
             id = atoi(strtok(str, DELIM));
             name = strtok(NULL, DELIM);
         }
-        addStation(stationsAdt, id, name);
-        if(errno == ENOMEM) {
-            exit(1);
-        }
+        addStation(stationsAdt, id, name, flag);    // si hay algun error en addStation, la funcion misma se ocupa de notificarle al front para que aborte
     }
-    //fillOrderedIds(stationsAdt); // crea el arreglo ordenado por id
 }
 
-void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char isRange) {
+void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char isRange, size_t * status) {
     char str[MAX_CHAR], isMember, *aux;
     size_t fromId, toId, month, year, day;
     fgets(str, MAX_CHAR, file); // obtiene la primera linea, que solamente aclara el formato.
-    //newMat(stationsAdt); // creo la matriz de (cant_estaciones)x(cant_estaciones)
 
     while(fgets(str, MAX_CHAR, file) != NULL) {
         isMember = 0;
@@ -57,6 +52,6 @@ void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char i
         year = atoi(strtok(aux, "-"));
         month = atoi(strtok(NULL, "-"));
         day = atoi(strtok(NULL, "-"));
-        processEvent(stationsAdt, year, month, day, fromId, toId, isMember, isRange);
+        processEvent(stationsAdt, year, month, day, fromId, toId, isMember, isRange, status);
     }
 }

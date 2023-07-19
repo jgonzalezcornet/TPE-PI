@@ -1,6 +1,9 @@
 #ifndef _safe_memory_h_
 #define _safe_memory_h_
 
+#include <stdio.h>
+#include "stationsADT.h"
+
 /*
     Funcion: safeMalloc
     Uso: ... = safeMalloc(...);
@@ -12,7 +15,7 @@
     memoria suficiente.
 */
 
-void * safeMalloc(size_t bytes);
+void * safeMalloc(size_t bytes, size_t * status, stationsADT stationsAdt);
 
 /*
     Funcion: safeCalloc
@@ -25,6 +28,6 @@ void * safeMalloc(size_t bytes);
     memoria suficiente.
 */
 
-void * safeCalloc(size_t quan, size_t bytes);
+void * safeCalloc(size_t quan, size_t bytes, size_t * status, stationsADT stationsAdt);
 
 #endif

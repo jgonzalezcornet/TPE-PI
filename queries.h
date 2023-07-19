@@ -21,7 +21,7 @@
     por usuarios miembros. 
 */
 
-htmlTable query1(stationsADT stationsAdt, FILE * query1);
+htmlTable query1(stationsADT stationsAdt, FILE * query1, size_t * status);
 
 /*
     Funcion: query2
@@ -34,7 +34,7 @@ htmlTable query1(stationsADT stationsAdt, FILE * query1);
     el nombre de A y desempatando por el de B.
 */
 
-htmlTable query2(stationsADT stationsAdt, FILE * query2);
+htmlTable query2(stationsADT stationsAdt, FILE * query2, size_t * status);
 
 /*
     Funcion: query3
@@ -46,7 +46,7 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2);
     en orden alfabetico por nombre de la estacion.
 */
 
-htmlTable query3(stationsADT stationsAdt, FILE * query3);
+htmlTable query3(stationsADT stationsAdt, FILE * query3, size_t * status);
 
 /*
     Funcion: query4
@@ -59,7 +59,7 @@ htmlTable query3(stationsADT stationsAdt, FILE * query3);
     de viajes y desempatado alfabeticamente.
 */
 
-htmlTable query4(stationsADT stationsAdt, FILE * query4);
+htmlTable query4(stationsADT stationsAdt, FILE * query4, size_t * status);
 
 /*
     Funcion: query5
@@ -72,6 +72,6 @@ htmlTable query4(stationsADT stationsAdt, FILE * query4);
     y negativa. Orden alfabetico.
 */
 
-htmlTable query5(stationsADT stationsAdt, FILE * query5, size_t firstYear, size_t lastYear);
+htmlTable query5(stationsADT stationsAdt, FILE * query5, size_t firstYear, size_t lastYear, size_t * status);
 
 #endif

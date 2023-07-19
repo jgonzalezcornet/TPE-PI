@@ -21,7 +21,7 @@
     a la de Montreal o a la de Nueva York.
 */
 
-void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier);
+void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier, size_t * status);
 
 /*
     Funcion: parseEvents
@@ -33,6 +33,6 @@ void parseStations(stationsADT stationsAdt, FILE *file, size_t identifier);
     a la de Montreal o a la de Nueva York.
 */
 
-void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char isRange);
+void parseEvents(stationsADT stationsAdt, FILE * file, size_t identifier, char isRange, size_t * status);
 
 #endif

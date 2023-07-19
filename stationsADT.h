@@ -14,8 +14,6 @@
 
 typedef struct stationsCDT *stationsADT;
 
-// !!!!! ver si hay alguna funcion que esta aca y no deberia estarlo (cuando organicemos bien front y back vamos a ver eso)
-
 /*
     Funcion: newStations
     Uso: stations = newStations();
@@ -24,7 +22,7 @@ typedef struct stationsCDT *stationsADT;
     de datos "stations". Inicialmente, no habra informacion cargada.
 */
 
-stationsADT newStations(size_t firstYear, size_t lastYear);
+stationsADT newStations(size_t firstYear, size_t lastYear, size_t * status);
 
 /*
     Funcion: newMat
@@ -35,7 +33,7 @@ stationsADT newStations(size_t firstYear, size_t lastYear);
     registrar los viajes de i->j (Acceso: mat[i][j]).
 */
 
-void newMat(stationsADT stationsAdt);
+void newMat(stationsADT stationsAdt, size_t * status);
 
 /*
     Funcion: addStations
@@ -48,7 +46,7 @@ void newMat(stationsADT stationsAdt);
     . 1 si la ciudad es Montreal, o un tipo de formato como esta.
 */
 
-void addStation(stationsADT stationsAdt, size_t id, char* name);
+void addStation(stationsADT stationsAdt, size_t id, char * name, size_t * status);
 
 /*
     Funcion: freeStations
@@ -68,7 +66,7 @@ void freeStations(stationsADT stationsAdt);
     los campos correspondientes en el TAD y en la matriz.
 */
 
-void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember, char isRange);
+void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day, size_t fromId, size_t toId, char isMember, char isRange, size_t * status);
 
 /*
     Funcion: rearrangeByTrip
@@ -79,7 +77,7 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
 */
 
 //flag == 0 -> firstByTrip    flag == 1 -> firstByRoundTrip
-void rearrangeByTrip(stationsADT stationsAdt, size_t flag);
+void rearrangeByTrip(stationsADT stationsAdt, size_t flag, size_t * status);
 
 /*
 
@@ -96,7 +94,7 @@ void rearrangeByRoundTrip(stationsADT stationsAdt);
     por cantidad de viajes.
 */
 
-void toBeginTrip(stationsADT stationsAdt);
+void toBeginTrip(stationsADT stationsAdt, size_t * status);
 
 /*
     Funcion: hasNextTrip
@@ -106,7 +104,7 @@ void toBeginTrip(stationsADT stationsAdt);
     tiene un elemento siguiente, para evitar problemas de memoria.
 */
 
-int hasNextTrip(stationsADT stationsAdt);
+int hasNextTrip(stationsADT stationsAdt, size_t * status);
 
 /*
     Funcion: nextTrip
@@ -117,7 +115,7 @@ int hasNextTrip(stationsADT stationsAdt);
     exista. Si se pudo mover, retorna 1. Si no, 0.
 */
 
-int nextTrip(stationsADT stationsAdt);
+int nextTrip(stationsADT stationsAdt, size_t * status);
 
 /*
     Funcion: toBeginName
@@ -137,7 +135,7 @@ void toBeginName(stationsADT stationsAdt);
     tiene un elemento siguiente, para evitar problemas de memoria.
 */
 
-int hasNextName(stationsADT stationsAdt);
+int hasNextName(stationsADT stationsAdt, size_t * status);
 
 /*
     Funcion: nextName
@@ -148,13 +146,13 @@ int hasNextName(stationsADT stationsAdt);
     exista. Si se pudo mover, retorna 1. Si no, 0.
 */
 
-int nextName(stationsADT stationsAdt);
+int nextName(stationsADT stationsAdt, size_t * status);
 
-void toBeginRoundTrip(stationsADT stationsAdt);
+void toBeginRoundTrip(stationsADT stationsAdt, size_t * status);
 
-int hasNextRoundTrip(stationsADT stationsAdt);
+int hasNextRoundTrip(stationsADT stationsAdt, size_t * status);
 
-int nextRoundTrip(stationsADT stationsAdt);
+int nextRoundTrip(stationsADT stationsAdt, size_t * status);
 
 /*
     Funcion: getName
@@ -165,11 +163,11 @@ int nextRoundTrip(stationsADT stationsAdt);
     de la flag: 1 = itName, 0 = itTrip.
 */
 
-char * getNameByName(stationsADT stationAdt);
+char * getNameByName(stationsADT stationAdt, size_t * status);
 
-char * getNameByTrip(stationsADT stationAdt);
+char * getNameByTrip(stationsADT stationAdt, size_t * status);
 
-char * getNameByRoundTrip(stationsADT stationAdt);
+char * getNameByRoundTrip(stationsADT stationAdt, size_t * status);
 
 /*
     Funcion: getTotalMemberTrips
@@ -180,9 +178,9 @@ char * getNameByRoundTrip(stationsADT stationAdt);
     de la flag: 1 = itName, 0 = itTrip, 2 = itRoundTrip.
 */
 
-int getTotalTripsByTrip(stationsADT stationAdt);
+int getTotalTripsByTrip(stationsADT stationAdt, size_t * status);
 
-int getTotalTripsByRoundTrip(stationsADT stationAdt);
+int getTotalTripsByRoundTrip(stationsADT stationAdt, size_t * status);
 
 /*
     Funcion: getTripsByMonth
@@ -192,7 +190,7 @@ int getTotalTripsByRoundTrip(stationsADT stationAdt);
     comenzados en la estacion itName en e "month" correspondiente.
 */
 
-size_t getTripsByMonth(stationsADT stationsAdt, size_t month);
+size_t getTripsByMonth(stationsADT stationsAdt, size_t month, size_t * status);
 
 /*
     Funcion: getTripsAtoB
@@ -243,12 +241,6 @@ size_t getFirstYear(stationsADT stationsAdt);
 
 size_t getLastYear(stationsADT stationsAdt);
 
-void fillOrderedIds(stationsADT stationsAdt);
-
-void printList(stationsADT stationsAdt);
-
-void printOrderedByIds(stationsADT stationsAdt);
-
-void printMatPerYear(stationsADT stationAdt);
+void fillOrderedIds(stationsADT stationsAdt, size_t * status);
 
 #endif
