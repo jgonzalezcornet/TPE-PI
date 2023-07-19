@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "safeMemory.h"
 
-#define MAX_DIGITS 15
+#define MAX_DIGITS 50
 
 static char * intToString(int num, size_t * status) {
     if(num < 0) { // en la query , por si fallo nextTrip
