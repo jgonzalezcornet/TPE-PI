@@ -28,3 +28,4 @@
 
 * en caso de que se creen los directorios bikeSharingMON.dSYM y bikeSharingNYC.dSYM, debera eliminarlos manualmente.
 * los viajes entre estaciones deben comenzar y finalizar en el mismo dia para el óptimo funcionamiento del programa.
+* los años comprendidos mediante los cuales se pueden obtener los datos se encuentran entre el año 0 y el año 4000.
