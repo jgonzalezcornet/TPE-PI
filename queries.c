@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "safeMemory.h"
 
+#define MIN(a, b) (return a <= b ? a : b)
+
 #define MAX_DIGITS 15
 
 static char * intToString(int num, size_t * status) {
@@ -14,7 +16,7 @@ static char * intToString(int num, size_t * status) {
         *status = 3;  // error de memoria --> va a hacer que el front aborte el programa
     }
     int sz = sizeof(s);
-    snprintf(s, sz, "%d", min(num, 10000000));
+    snprintf(s, sz, "%d", MIN(num, 100000000)); // num siempre es menor a ese otro numero, evita warning
     return s;
 }
 
