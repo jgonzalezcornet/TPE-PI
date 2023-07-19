@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "safeMemory.h"
 
-#define MAX_DIGITS 50
+#define MAX_DIGITS 15
 
 static char * intToString(int num, size_t * status) {
     if(num < 0) { // en la query , por si fallo nextTrip
@@ -14,7 +14,7 @@ static char * intToString(int num, size_t * status) {
         *status = 3;  // error de memoria --> va a hacer que el front aborte el programa
     }
     int sz = sizeof(s);
-    snprintf(s, sz, "%d", num);
+    snprintf(s, sz, "%d", min(num, 10000000));
     return s;
 }
 
