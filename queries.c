@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "safeMemory.h"
 
-#define MIN(a, b) (return a <= b ? a : b)
+#define MIN(a, b) (a <= b ? a : b)
 
 #define MAX_DIGITS 15
 
