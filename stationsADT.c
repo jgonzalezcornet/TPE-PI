@@ -460,7 +460,7 @@ void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int *
         } else if(aux->year > iterYear) {
             *neutralAfflux += DAYS_IN_YEAR; //el año no coincide
             iterYear++;
-        } else{
+        } else {
             aux = aux->tailByYear;
         }
     }

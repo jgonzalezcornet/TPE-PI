@@ -21,6 +21,11 @@ static char * intToString(int num, size_t * status) {
 htmlTable query1(stationsADT stationsAdt, FILE * query1, size_t * status) {
     htmlTable table = newTable("query1.html", 2, "Station", "StartedTrips");
     fprintf(query1, "Station;StartedTrips\n");
+
+    if(getDim(stationsAdt) == 0) { // no hay estaciones
+        return table;
+    }
+
     toBeginTrip(stationsAdt, status);
 
     do {
@@ -42,6 +47,10 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2, size_t * status) {
     fprintf(query2, "StationA;StationB;Trips A->B;Trips B->A\n");
 
     size_t dim = getDim(stationsAdt); // siendo la matriz de n*n, obtenemos n (cantidad de estaciones)
+
+    if(dim == 0) { // no hay estaciones
+        return table;
+    }
 
     for(size_t i = 0; i < dim; i++) {
         for(size_t j = 0; j < dim; j++) {
@@ -72,6 +81,11 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2, size_t * status) {
 htmlTable query3(stationsADT stationsAdt, FILE * query3, size_t * status) {
     htmlTable table = newTable("query3.html", 13, "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D", "Station");
     fprintf(query3, "J;F;M;A;M;J;J;A;S;O;N;D;Station\n");
+
+    if(getDim(stationsAdt) == 0) { // no hay estaciones
+        return table;
+    }
+
     toBeginName(stationsAdt);
     int count;
     do {
@@ -97,6 +111,11 @@ htmlTable query3(stationsADT stationsAdt, FILE * query3, size_t * status) {
 htmlTable query4(stationsADT stationsAdt, FILE * query4, size_t * status) {
     htmlTable table = newTable("query4.html", 2, "Station", "RoundingTrips");
     fprintf(query4, "Station;RoundingTrips\n");
+
+    if(getDim(stationsAdt) == 0) { // no hay estaciones
+        return table;
+    }
+
     toBeginRoundTrip(stationsAdt, status);
 
     do {
@@ -116,6 +135,11 @@ htmlTable query4(stationsADT stationsAdt, FILE * query4, size_t * status) {
 htmlTable query5(stationsADT stationsAdt, FILE * query5, size_t firstYear, size_t lastYear, size_t * status) {
     htmlTable table = newTable("query5.html", 4, "Station", "PosAfflux", "NeutralAfflux", "NegativeAfflux");
     fprintf(query5, "Station;PosAfflux;NeutralAfflux;NegativeAfflux\n");
+
+    if(getDim(stationsAdt) == 0) { // no hay estaciones
+        return table;
+    }
+
     toBeginName(stationsAdt);
 
     do {
