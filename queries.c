@@ -14,7 +14,7 @@ static char * intToString(int num, size_t * status) {
         *status = 3;  // error de memoria --> va a hacer que el front aborte el programa
     }
     int sz = sizeof(s);
-    snprintf(s, sz, "%d", num); // num siempre es menor a ese otro numero, evita warning
+    snprintf(s, sz, "%zu", (size_t)num);
     return s;
 }
 
