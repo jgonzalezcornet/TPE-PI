@@ -106,7 +106,7 @@ void toBeginTrip(stationsADT stationsAdt);
     tiene un elemento siguiente, para evitar problemas de memoria.
 */
 
-size_t hasNextTrip(stationsADT stationsAdt);
+int hasNextTrip(stationsADT stationsAdt);
 
 /*
     Funcion: nextTrip
@@ -137,7 +137,7 @@ void toBeginName(stationsADT stationsAdt);
     tiene un elemento siguiente, para evitar problemas de memoria.
 */
 
-size_t hasNextName(stationsADT stationsAdt);
+int hasNextName(stationsADT stationsAdt);
 
 /*
     Funcion: nextName
@@ -152,7 +152,7 @@ int nextName(stationsADT stationsAdt);
 
 void toBeginRoundTrip(stationsADT stationsAdt);
 
-size_t hasNextRoundTrip(stationsADT stationsAdt);
+int hasNextRoundTrip(stationsADT stationsAdt);
 
 int nextRoundTrip(stationsADT stationsAdt);
 
@@ -203,7 +203,7 @@ size_t getTripsByMonth(stationsADT stationsAdt, size_t month);
     del valor.
 */
 
-size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB);
+int getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB);
 
 /*
     Funcion: getMatrixName

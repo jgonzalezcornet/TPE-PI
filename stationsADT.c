@@ -7,6 +7,8 @@
 #include <errno.h>
 #include "safeMemory.h"
 
+typedef int (*compFn)(const void *, const void *);
+
 #define MAX_LEN 100
 #define DAYS_IN_YEAR 365
 
@@ -54,24 +56,18 @@ struct stationsCDT {
 
 /* ---- Funciones para el vector de punteros a estaciones ----- */
 
-/* TODO define */
-
-static void swap(struct stationByName ** v, size_t i, size_t j) {
-    struct stationByName *aux = v[i];
-    v[i] = v[j];
-    v[j] = aux;
-}
-
 /* TODO qsort */
 
-static void bubbleSort(struct stationByName ** v, size_t dim) {
-    for(size_t i = 0; i < dim - 1; i++) {
-        for(size_t j = 0; j < dim - i - 1; j++) {
-            if(v[j] != NULL && v[j+1] != NULL && v[j]->id > v[j+1]->id) {
-                swap(v, j, j+1);
-            }
-        }
+int compareStations(struct stationByName ** v1, struct stationByName ** v2) {
+    size_t s1Id = (*v1)->id;
+    size_t s2Id = (*v2)->id;
+
+    if(s1Id < s2Id) {
+        return -1;
+    } else if(s1Id > s2Id) {
+        return 1;
     }
+    return 0;
 }
 
 static void traverseListToFillArray(stationByName * first, size_t i, struct stationByName ** ids) {
@@ -86,7 +82,7 @@ static void traverseListToFillArray(stationByName * first, size_t i, struct stat
 void fillOrderedIds(stationsADT stationsAdt) {
     stationsAdt->orderedIds = safeMalloc(stationsAdt->dim * sizeof(struct stationByName *));
     traverseListToFillArray(stationsAdt->firstByName, 0, stationsAdt->orderedIds);
-    bubbleSort(stationsAdt->orderedIds, stationsAdt->dim);
+    qsort(stationsAdt->orderedIds, stationsAdt->dim, sizeof(stationByName *), (compFn)compareStations); // casteo el comparador a compFn
 }
 
 static struct stationByName * getStationById(stationsADT stationsAdt, size_t id) {
@@ -295,10 +291,11 @@ void toBeginTrip(stationsADT stationsAdt) {
     stationsAdt->itTrip = stationsAdt->firstByTrip;
 }
 
-size_t hasNextTrip(stationsADT stationsAdt) {
+int hasNextTrip(stationsADT stationsAdt) {
     if (stationsAdt->itTrip != NULL){  // !!!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
         return stationsAdt->itTrip->tailByTrip != NULL;
     }
+    return -1;
 }
 
 int nextTrip(stationsADT stationsAdt) {
@@ -316,10 +313,11 @@ void toBeginRoundTrip(stationsADT stationsAdt) {
     stationsAdt->itRoundTrip = stationsAdt->firstByRoundTrip;
 }
 
-size_t hasNextRoundTrip(stationsADT stationsAdt) {
+int hasNextRoundTrip(stationsADT stationsAdt) {
     if (stationsAdt->itRoundTrip != NULL) {  // !!!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
         return stationsAdt->itRoundTrip->tailByTrip != NULL;
     }
+    return -1;
 }
 
 int nextRoundTrip(stationsADT stationsAdt) {
@@ -336,10 +334,11 @@ void toBeginName(stationsADT stationsAdt) {
     stationsAdt->itName = stationsAdt->firstByName;
 }
 
-size_t hasNextName(stationsADT stationsAdt) {
+int hasNextName(stationsADT stationsAdt) {
     if(stationsAdt->itName != NULL) {       // !!!!!! no se si hace falta esto, y no se que hariamos en caso de else, ver como resolver
         return stationsAdt->itName->tailByName != NULL;
     }
+    return -1;
 }
 
 int nextName(stationsADT stationsAdt) {
@@ -402,10 +401,11 @@ char * getMatrixName(stationsADT stationsAdt, size_t indexA, size_t indexB) {
     return NULL;
 }
 
-size_t getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
+int getTripsAtoB(stationsADT stationsAdt, size_t indexA, size_t indexB) {
     if(indexA >= 0 && indexA < stationsAdt->dim && indexB >= 0 && indexB < stationsAdt->dim) {  // PROGRAMACION DEFENSIVA en realidad >=0 no hace falta porque es un size_t pero bueno ver eso
         return stationsAdt->matrix[indexA][indexB].quanTripsAtoB;
     }
+    return -1;
 }
 
 size_t getDim(stationsADT stationsAdt) {
@@ -426,7 +426,6 @@ static void getAffluxInMat(int **matrix, int * posAfflux, int * neutralAfflux, i
         }
     }
 }
-
 
 void getAfflux(stationsADT stationsAdt, size_t firstYear, size_t lastYear, int * posAfflux, int * neutralAfflux, int * negAfflux) {
     *posAfflux = 0;

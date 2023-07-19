@@ -43,17 +43,21 @@ htmlTable query2(stationsADT stationsAdt, FILE * query2) {
     for(size_t i = 0; i < dim; i++) {
         for(size_t j = 0; j < dim; j++) {
             if(i != j) {                     // pues no hay que considerar los viajes circulares
-                size_t AB = getTripsAtoB(stationsAdt, i, j);
-                size_t BA = getTripsAtoB(stationsAdt, j, i);
+                int AB = getTripsAtoB(stationsAdt, i, j);
+                int BA = getTripsAtoB(stationsAdt, j, i);
                 char * nameA = getMatrixName(stationsAdt, i, j);
                 char * nameB = getMatrixName(stationsAdt, j, i);
                 if(AB > 0) {
                     char *abStr = intToString(AB);
                     char *baStr = intToString(BA);
                     addHTMLRow(table, nameA, nameB, abStr, baStr); // agregamos la fila al HTML
-                    fprintf(query2, "%s;%s;%zu;%zu\n", nameA, nameB, AB, BA); // imprimimos la fila en el CSV
-                    free(abStr);
-                    free(baStr);
+                    fprintf(query2, "%s;%s;%d;%d\n", nameA, nameB, AB, BA); // imprimimos la fila en el CSV
+                    if(abStr != NULL) {
+                        free(abStr);
+                    }
+                    if(baStr != NULL) {
+                        free(baStr);
+                    }
                 }
             }
         }
