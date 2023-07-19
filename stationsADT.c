@@ -196,8 +196,6 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
         }
     }
 
-    //char ** nameA = safeMalloc(sizeof(char *));
-    //char ** nameB = safeMalloc(sizeof(char *));
     size_t flagA, flagB;
     flagA = 0;
     flagB = 0;
@@ -211,13 +209,11 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
 	    statFrom->quanTripsMonth[month - 1]++;
 	    flagA = 1;
         indexA = statFrom->alfaId;
-	    //*nameA = statFrom->name;
     }
 
     if(statTo != NULL) {
         flagB = 1;
         indexB = statTo->alfaId;
-        //*nameB = statTo->name;
     }
 
     if(flagA && flagB) {
@@ -230,11 +226,9 @@ void processEvent(stationsADT stationsAdt, size_t year, size_t month, size_t day
         }
         if(indexA != indexB){
             addTripAtoB(stationsAdt->matrix , statFrom, statTo, indexA, indexB);
-        }
-        
+        }    
     }
-    //free(nameA);
-    //free(nameB);
+    
 }
 
 void newMat(stationsADT stationsAdt) {
